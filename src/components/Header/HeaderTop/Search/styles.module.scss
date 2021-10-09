@@ -1,0 +1,121 @@
+.searchBlock {
+    display: flex;
+    align-items: center;
+    // width: 100%;
+    // max-width: 450px;
+}
+
+.mail {
+    margin-right: 50px;
+    display: flex;
+    align-items: center;
+    &__icon {
+        margin-left: 7px;
+        width: 20px;
+        height: 16px;
+        & > svg > path:hover {
+            transition: fill 0.3s;
+            fill: $grey-99;
+        }
+    }
+    &__count {
+        font-weight: 500;
+        font-size: 14px;
+        color: #fff;
+        padding: 6px 9px;
+        line-height: 1;
+        background-color: $orange;
+        border-radius: 100%;
+    }
+}
+
+.search {
+    border: none;
+    padding: 15px 10px 15px 50px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 30px;
+    width: 360px;
+    background-image: url("data:image/svg+xml,%3Csvg width='19' height='19' viewBox='0 0 19 19' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M13.5792 11.9497H12.721L12.4168 11.6564C13.4814 10.418 14.1224 8.81018 14.1224 7.06118C14.1224 3.16124 10.9611 0 7.06118 0C3.16124 0 0 3.16124 0 7.06118C0 10.9611 3.16124 14.1224 7.06118 14.1224C8.81018 14.1224 10.418 13.4814 11.6564 12.4168L11.9497 12.721V13.5792L17.3814 19L19 17.3814L13.5792 11.9497ZM7.06118 11.9497C4.3562 11.9497 2.17267 9.76615 2.17267 7.06118C2.17267 4.3562 4.3562 2.17267 7.06118 2.17267C9.76615 2.17267 11.9497 4.3562 11.9497 7.06118C11.9497 9.76615 9.76615 11.9497 7.06118 11.9497Z' fill='%23C4C4C4'/%3E%3C/svg%3E%0A");
+    background-repeat: no-repeat;
+    background-position: 24px 16px;
+    position: relative;
+    color: $grey-c4;
+    font-size: 20px;
+    &::placeholder {
+        color: $grey-c4;
+    }
+}
+@media(max-width: 1122px){
+    .searchBlock{
+        justify-content: space-between;
+        flex-direction: row-reverse;
+    }
+
+    .mail {
+        margin-right: 0px;
+        margin-left: 10px;
+        display: flex;
+        align-items: center;
+    }
+}
+
+@media(max-width: 600px){
+    .searchBlock {
+        display: flex;
+        align-items: center;
+    }
+
+
+    .search {
+        padding: 10px 10px 10px 35px;
+        width: 100%;
+        max-width: 360px;
+        background-position: 18px 10px;
+        background-size: 11px 11px;
+        font-size: 12px;
+        // color: $grey-f4;
+        &::placeholder {
+            // color: $grey-f4;
+        }
+    }
+
+
+    .mail {
+        &__icon {
+            width: 13px;
+            height: 11px;
+            & > svg > path:hover {
+                fill: none;
+            }
+        }
+        &__count {
+            font-weight: 500;
+            font-size: 10px;
+            color: #fff;
+            padding: 4px 6px 3px 5px;
+            line-height: 1;
+            background-color: $orange;
+            border-radius: 100%;
+        }
+    }
+}
+
+// input[type='text']::-ms-clear {
+//     display: none;
+//     width: 0;
+//     height: 0;
+// }
+// input[type='text']::-ms-reveal {
+//     display: none;
+//     width: 0;
+//     height: 0;
+// }
+// input[type='search']::-webkit-search-decoration,
+// input[type='search']::-webkit-search-cancel-button,
+// input[type='search']::-webkit-search-results-button,
+// input[type='search']::-webkit-search-results-decoration {
+//     display: none;
+// }
+// .mail__icon:hover {
+//     fill: @orange;
+// }

@@ -1,0 +1,21 @@
+.headerTopContainer {
+    padding: 0 12px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+@media(max-width: 1122px){
+    .headerTopContainer{
+        display: block;
+    }
+}
+
+@media(max-width: 600px){
+    .headerTopContainer {
+        padding: 14px 20px;
+        background-color: #fff;
+        border-radius: 0px 0px 7px 7px;
+    }
+}

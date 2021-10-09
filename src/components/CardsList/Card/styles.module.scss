@@ -1,0 +1,298 @@
+.card {
+    background-color: $white;
+    padding: 20px 42px 20px 75px;
+    display: flex;
+    border-bottom: 1px solid transparent;
+    border-top: 1px solid transparent;
+    &__title {
+        font-weight: 400;
+        font-size: 20px;
+        max-width: 900px;
+        line-height: 1;
+        margin-bottom: 8px;
+        transition: color 0.3s;
+        &:hover {
+            color: $orange;
+        }
+    }
+
+    &__img {
+        width: 190px;
+        height: 107px;
+        flex: none;
+        position: relative;
+        margin-right: 38px;
+    }
+
+    &__noImg{
+        color: $orange;
+        font-size: 16px;
+        position: absolute;
+        right: calc(50% - 26px);
+        top: 50%;
+    }
+
+    &__body {
+        margin-top: 28px;
+        position: relative;
+        width: 100%;
+    }
+
+    &__publickHours {
+        color: $grey-99;
+        display: block;
+    }
+
+    &__userInfoWrapper,
+    &__userInfo {
+        display: flex;
+        align-items: center;
+    }
+
+    &__userName {
+        color: $orange;
+        display: block;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    &__avatar {
+        width: 20px;
+        height: 20px;
+        margin: 0 7px;
+        object-fit: cover;
+        object-position: center;
+        position: relative;
+        overflow: hidden;
+        border-radius: 100px;
+    }
+
+    &:hover {
+        border-bottom: 1px solid $grey-d9;
+        border-top: 1px solid $grey-d9;
+    }
+}
+
+// ####################################################
+
+.cardMenu {
+    position: relative;
+    width: 5px;
+    height: 5px;
+    z-index: 3;
+    border-radius: 50%;
+    left: -45px;
+    top: -10px;
+    background-color: $grey-d9;
+    &::after,
+    &::before {
+        content: '';
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        left: 0;
+        background-color: $grey-d9;
+    }
+    &::before {
+        top: -8px;
+    }
+
+    &::after {
+        bottom: -8px;
+    }
+}
+
+.cardMenu__emptyArea {
+    position: absolute;
+    width: 31px;
+    top: -11px;
+    left: -12.5px;
+    z-index: 2;
+    height: 31px;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+    &:hover {
+        background: rgba(51, 51, 51, 0.1);
+    }
+}
+
+.cardMenu__list {
+    position: absolute;
+    top: 34px;
+    left: -120px;
+    border-radius: 3px;
+    background-color: $white;
+    padding: 12px 20px 15px 20px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.15);
+}
+
+.controlWrapper {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    right: 0;
+    top: -10px;
+}
+.listItem {
+    display: flex;
+    font-size: 14px;
+    padding-bottom: 12px;
+    width: 100%;
+    align-items: flex-start;
+    border-bottom: 1px solid #ececec;
+    & + & {
+        padding-top: 12px;
+    }
+    &:hover p,
+    &:hover path {
+        transition: all 0.3s;
+        color: $orange;
+        fill: $orange;
+    }
+
+    & > p {
+        color: $grey-99;
+    }
+    &:nth-last-child(2) {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    &:last-child {
+        background-color: $grey-d9;
+        position: absolute;
+        padding-top: 12px;
+        margin-bottom: 0;
+        border-radius: 0 0 3px 3px;
+        left: 0;
+        & > p {
+            display: block;
+            color: #666;
+            margin: 0 auto;
+        }
+    }
+}
+.active {
+    & > p {
+        color: red;
+    }
+    & > svg > path {
+        fill: red;
+    }
+}
+
+.triggerActive {
+    background: rgba(51, 51, 51, 0.1);
+}
+
+@media (max-width: 1132px) {
+    .card {
+        padding: 20px 40px 20px 40px;
+        border: none;
+        &:hover {
+            border: none;
+        }
+        &__title {
+            white-space: nowrap;
+            overflow: hidden;
+            padding-bottom: 3px;
+            text-overflow: ellipsis;
+            max-width: 540px;
+        }
+    }
+}
+
+@media (max-width: 940px) {
+    .card {
+        padding: 22px 0px 0px 0px;
+        flex-direction: column-reverse;
+        margin-bottom: 20px;
+        &__title {
+            white-space: nowrap;
+            overflow: hidden;
+            padding-bottom: 3px;
+            text-overflow: ellipsis;
+            max-width: 540px;
+        }
+        &__img {
+            min-width: 100%;
+
+            height: auto;
+        }
+        &__body {
+            display: flex;
+            flex-direction: column-reverse;
+            padding: 20px;
+            padding-top: 0;
+            margin-top: 0;
+        }
+        &__userName {
+            order: 0;
+            margin-right: 7px;
+        }
+
+        &__userInfoWrapper {
+            margin-bottom: 15px;
+        }
+
+        &__publickHours {
+            order: 1;
+        }
+
+        &__avatar {
+            margin: 0 7px 0 0;
+        }
+    }
+
+    .cardMenu__list {
+        top: 50px;
+        left: -200px;
+    }
+
+    .cardMenu {
+        top: 8px;
+    }
+    .cardMenu::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -18px;
+    }
+    .cardMenu::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: -9px;
+    }
+
+    .cardMenu__emptyArea {
+        top: -13px;
+        left: -22px;
+        pointer-events: none;
+    }
+}
+
+@media (max-width: 580px) {
+    .card {
+        border-radius: 7px;
+        &__title {
+            white-space: inherit;
+            overflow: inherit;
+            padding-bottom: 0;
+            text-overflow: inherit;
+            max-width: 280px;
+            font-size: 16px;
+            margin-bottom: 0;
+            pointer-events: none;
+        }
+
+        &__userName {
+            font-size: 10px;
+        }
+
+        &__publickHours {
+            font-size: 10px;
+        }
+    }
+}

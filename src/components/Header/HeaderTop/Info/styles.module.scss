@@ -1,0 +1,12 @@
+.info {
+    display: flex;
+    align-items: center;
+    &__title {
+        margin-right: 28px;
+        display: inline;
+        min-width: 220px;
+    }
+    &__trigger {
+        color: $orange;
+    }
+}

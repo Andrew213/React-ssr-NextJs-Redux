@@ -1,0 +1,29 @@
+.visuallyHidden {
+    position: absolute;
+    clip: rect(0 0 0 0);
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+}
+
+.header{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    padding: 40px;
+}
+
+// @media (max-width: 1024px) {
+//     .header {
+//         display: flex;
+//         flex-flow: row nowrap;
+//         align-items: center;
+//         padding: 40px;
+//     }
+// }
+
+@media (max-width: 600px) {
+    .header {
+        padding: 0;
+    }
+}
