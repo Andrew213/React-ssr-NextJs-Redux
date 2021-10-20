@@ -1,0 +1,18 @@
+.cardList{
+     margin-top: 70px;
+     background-color: #fff;
+     border-radius: 10px;
+     padding-top: 47px;
+}
+
+.load{
+     position: absolute;
+     right: calc(50% - 60px);
+     top: 50vh;
+}
+
+@media(max-width: 990px){
+     .cardList{
+     padding-top: 0;
+     }
+}

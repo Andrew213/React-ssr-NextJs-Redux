@@ -1,0 +1,28 @@
+.cardControlMobile {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    &__commentsCount{
+        color: $grey-99;
+    }
+}
+
+.cardControlMobile__comments {
+    position: relative;
+}
+.cardControlMobile__commentsIcon {
+    position: absolute;
+}
+
+.cardControlMobile__commentsCount {
+    padding-left: 20px;
+}
+
+.cardControlMobile__items {
+    display: flex;
+}
+
+.cardControlMobile__item + .cardControlMobile__item {
+    margin-left: 15px;
+}

@@ -1,0 +1,24 @@
+.dropDown{
+    cursor: pointer;
+    // width: 100%;
+    &__listContainer{
+        position: relative;
+    }
+    &__list{
+        position: absolute;
+    }
+    &__trigger_flex{
+        display: flex;
+        align-items: center;
+    }
+    &__prefix {
+        margin-right: 5px;
+        cursor: pointer;
+    }
+    
+    &__suffix {
+        cursor: pointer;
+        margin-left: 5px;
+    }
+}
+
