@@ -1,0 +1,51 @@
+.comment{
+    padding-top: 50px;
+    display: flex;
+    &__karmaWrapper{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding-left: -20px;
+    }
+
+    &__karma{
+        margin-left: -8px;
+        margin-bottom: 20px;
+        margin-right: 22px;
+        & > span {
+            color: transparent;
+            margin: 0;
+            cursor: default;
+        }
+        
+    }
+
+    &__separator{
+        width: 3px;
+        background-color: $grey-d9;
+        height: 100%;
+    }
+
+    &__text{
+        line-height: 22px;
+    }
+
+    &__control{
+        display: flex;
+        margin-top: 20px;
+    }
+
+}
+
+.listItem{
+    display: flex;
+    align-items: flex-start;
+    &>p{
+        color: $grey-66;
+        line-height: 1;
+    }
+    &{
+        margin-right: 27px;
+    }
+    // align-items: center;
+}

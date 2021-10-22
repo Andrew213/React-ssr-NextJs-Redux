@@ -14,8 +14,8 @@ const CardList: React.FC = () => {
     const [data] = useUserPosts();
     const [postsArr, setPostsArr] = useState([]);
     const { width, height } = useWindowSize();
-
     useEffect(() => {
+        console.log('data ', data);
         if (data.length) {
             const posts = data[0]?.data?.children;
             const postsArrClone = postsArr.slice();
@@ -29,36 +29,40 @@ const CardList: React.FC = () => {
         }
     }, [data]);
 
-    console.log(`data `, postsArr);
     return data.length ? (
-        <div className={styles.cardList}>
-            <ul>
-                {postsArr.map(({ data }, i) => {
-                    const detail = data.sr_detail;
-                    const created = formatUnixDate(data.created);
-                    const pubTime = `${width > 460 ? 'опубликованно' : ''} ${created} ${declOfNum(
-                        created,
-                        ARR_HOUR
-                    )} назад`;
-                    const thumb =
-                        data.thumbnail !== 'self' &&
-                        data.thumbnail !== 'nsfw' &&
-                        data.thumbnail !== 'default' &&
-                        data.thumbnail;
-                    console.log(`thumb `, thumb);
-                    return (
-                        <Card
-                            nicName={data.author}
-                            avatar={detail.icon_img}
-                            title={detail.title}
-                            key={data.id}
-                            publicTime={pubTime}
-                            thumbnail={thumb}
-                        />
-                    );
-                })}
-            </ul>
-        </div>
+        <>
+            <div className={styles.cardList}>
+                <ul>
+                    {postsArr.map(({ data }, i) => {
+                        const detail = data.sr_detail;
+                        const created = formatUnixDate(data.created);
+                        const pubTime = `${width > 460 ? 'опубликованно' : ''} ${created} ${declOfNum(
+                            created,
+                            ARR_HOUR
+                        )} назад`;
+                        const thumb =
+                            data.thumbnail !== 'self' &&
+                            data.thumbnail !== 'nsfw' &&
+                            data.thumbnail !== 'default' &&
+                            data.thumbnail;
+
+                        return (
+                            <Card
+                                nickName={data.author}
+                                avatar={detail.icon_img}
+                                title={detail.title}
+                                key={data.id}
+                                publicTime={pubTime}
+                                subbreddit={data.subreddit}
+                                thumbnail={thumb}
+                                banner={detail.banner_img}
+                                permaLink={data.permalink}
+                            />
+                        );
+                    })}
+                </ul>
+            </div>
+        </>
     ) : (
         <div className={styles.load}>
             <Loader type="Circles" color="#cc6633" height={100} width={100} timeout={30000} />

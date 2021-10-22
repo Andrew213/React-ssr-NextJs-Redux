@@ -14,7 +14,7 @@ export const useUserPosts = () => {
                 },
             });
             const postsFromAPI = await response.json();
-            setPosts([...posts, postsFromAPI]);
+            setPosts([postsFromAPI]);
         };
         void foo();
     }, []);

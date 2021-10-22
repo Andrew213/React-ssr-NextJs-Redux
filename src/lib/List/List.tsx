@@ -11,7 +11,7 @@ export type ListProps = {
     As?: 'a' | 'li' | 'button' | 'div';
     href?: string;
     liIcon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-    onClick?: (id: string) => void;
+    onClick?: (id: string, text?: string) => void;
     onMouseEnter?: (id?: string) => void;
 };
 
@@ -23,7 +23,7 @@ const List: React.FC<ListProps> = props => {
         onMouseEnter,
     ]);
 
-    const handleClick = React.useCallback(() => onClick && onClick(id), [id, onClick]);
+    const handleClick = React.useCallback(() => onClick && onClick(id, text), [id, onClick, text]);
 
     return (
         <As className={className} onClick={handleClick} key={id} href={href} onMouseEnter={handleMouseEnter}>

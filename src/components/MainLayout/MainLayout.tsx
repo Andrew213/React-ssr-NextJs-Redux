@@ -1,10 +1,10 @@
 import React from 'react';
 import Head from 'next/head';
-
-import styles from './styles.module.scss';
 import Header from '../Header/Header';
 import { UserContextProvider } from '@/hooks/userContext';
 import { withCookies } from 'react-cookie';
+
+import styles from './styles.module.scss';
 
 type LayoutProps = {
     children: React.ReactNode;
