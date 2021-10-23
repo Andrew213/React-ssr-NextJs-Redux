@@ -13,8 +13,9 @@ const myAlias = {
 
 module.exports = {
   env: {
-    REDIRECT_URI: process.env.REDIRECT_URIб,
-    USER_ID: process.env.USER_ID
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL_INTERNAL,
+    CLIENT_ID: process.env.CLIENT_ID,
+    CLIENT_SECRET: process.env.CLIENT_SECRET,
   },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
 

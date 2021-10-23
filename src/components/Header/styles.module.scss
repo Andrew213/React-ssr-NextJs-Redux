@@ -2,7 +2,8 @@
     display: flex;
     justify-content: space-between;
     align-content: center;
-    padding-top: 65px;
+    padding-top: 65px !important;
+    // display: none;
     
     &__title{
         margin-right: 30px;
