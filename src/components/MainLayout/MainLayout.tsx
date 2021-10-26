@@ -21,10 +21,10 @@ const MainLayout: React.FC<LayoutProps> = ({ children, title = 'Blog', token }) 
                 <meta name="description" content="some description" />
                 <meta charSet="utf-8" />
             </Head>
-            <UserContextProvider>
-                <Header className={styles.layout} />
-                <main className={styles.layout}>{children}</main>
-            </UserContextProvider>
+            {/* <UserContextProvider> */}
+            <Header className={styles.layout} />
+            <main className={styles.layout}>{children}</main>
+            {/* </UserContextProvider> */}
         </>
     );
 };

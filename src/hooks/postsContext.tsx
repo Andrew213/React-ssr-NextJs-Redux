@@ -6,6 +6,7 @@ export const postsContext = React.createContext([]);
 export const useUserPosts = () => {
     const [posts, setPosts] = useState([]);
     const token = useContext(tokenContext);
+    // console.log(23);
     useEffect(() => {
         const foo = async () => {
             const response = await fetch('https://oauth.reddit.com/best?sr_detail=true', {

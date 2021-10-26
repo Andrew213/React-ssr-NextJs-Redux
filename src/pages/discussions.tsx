@@ -6,7 +6,6 @@ import { postsContext, PostsContextProvider } from '@/hooks/postsContext';
 import { useCookies } from 'react-cookie';
 import React, { useEffect } from 'react';
 import Link from 'next/link';
-s;
 
 type DiscussionsProps = {
     token: string | undefined;

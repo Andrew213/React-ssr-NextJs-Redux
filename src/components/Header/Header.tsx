@@ -1,13 +1,11 @@
 import React, { useContext } from 'react';
 import cn from 'classnames';
-import Link from 'next/link';
 import DropDown from '@/lib/DropDown/DropDown';
 import Chevron from '@img/icons/Desktop/chevron.svg';
 import Rocket from '@img/icons/Desktop/rocket.svg';
 import Mail from '@img/icons/Desktop/mail.svg';
 import Anonim from '@img/icons/Desktop/anonim.svg';
-import { useSession, signIn, signOut, getSession, session as ass } from 'next-auth/client';
-// import { useSession, signIn, signOut } from 'next-auth/react';
+import { useSession, signOut, session, signin } from 'next-auth/client';
 import Typography from '@/lib/Typography/Typography';
 import { userContext } from '@/hooks/userContext';
 import Icon from '@/lib/Icon/Icon';
@@ -18,15 +16,10 @@ type HeaderProps = {
     className?: string;
 };
 
-const ss = `https://www.reddit.com/api/v1/authorize?client_id=${process.env.CLIENT_ID}&response_type=code&state=random_string&redirect_uri=${process.env.REDIRECT_URI}&duration=permanent&scope=read submit identity`;
+// const ss = `https://www.reddit.com/api/v1/authorize?client_id=${process.env.CLIENT_ID}&response_type=code&state=random_string&redirect_uri=${process.env.REDIRECT_URI}&duration=permanent&scope=read submit identity`;
 
 const Header: React.FC<HeaderProps> = ({ className }) => {
     const [session, load] = useSession();
-
-    console.log(`session `, session);
-    // console.log(`ssesion `, loading);
-
-    const data = useContext(userContext);
     return (
         <>
             <header className={cn(className, styles.header)}>
@@ -61,26 +54,32 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                         <Icon component={Mail} width={20} height={16} className={styles.header__mailIcon} />
                     </button>
                     <input placeholder="Поиск" className={styles.header__search} type="search" />
-                    {!session && (
+                    {session ? (
                         <>
-                            <p>Not signed in </p>
-                            <button
-                                onClick={() => {
-                                    void signIn('reddit');
-                                }}
-                            >
-                                Sign in with Reddit
+                            <button className={styles.header__profileLink} onClick={() => signOut()}>
+                                <img src={session.user.image} className={styles.header__avatar} />
+                            </button>
+                            <button className={styles.header__nickNameLink} onClick={() => signOut()}>
+                                <Typography As="p" size={20} className={styles.header__nickName}>
+                                    {session.user.name ? session.user.name : 'Аноним'}
+                                </Typography>
                             </button>
                         </>
-                    )}
-                    {session && (
+                    ) : (
                         <>
-                            <p>Signed in as {session.user.name}</p> <button onClick={() => signOut()}>Log out</button>
+                            <button className={styles.header__profileLink} onClick={() => signin('reddit')}>
+                                <Icon component={Anonim} className={styles.header__avatar} />
+                            </button>
+                            <button className={styles.header__nickNameLink} onClick={() => signin('reddit')}>
+                                <Typography As="p" size={20} className={styles.header__nickName}>
+                                    {'Войти'}
+                                </Typography>
+                            </button>
                         </>
                     )}
                     {/* <Link href={`#`}>
                         <a className={styles.header__profileLink}>
-                            {data.iconImg ? (
+                            {user.avatar ? (
                                 <img src={data.iconImg} className={styles.header__avatar} />
                             ) : (
                                 <Icon component={Anonim} className={styles.header__avatar} />

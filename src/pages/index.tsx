@@ -2,17 +2,38 @@ import CardList from '@/components/CardList/CardList';
 import MainLayout from '@/components/MainLayout/MainLayout';
 import { GetServerSideProps, NextPage } from 'next';
 import cookie from 'cookie';
+import { getSession, useSession } from 'next-auth/client';
 
-type IndexProps = {
-    token: string;
-};
-
-const Index: NextPage<IndexProps> = ({ token }) => {
+const Index: NextPage = ({ postsData }) => {
+    console.log(`postsData `, postsData);
     return (
         <MainLayout>
+            {postsData && <h3>{postsData[0].data.title}</h3>}
             <CardList />
         </MainLayout>
     );
+};
+
+export const getServerSideProps: GetServerSideProps = async ctx => {
+    const session = await getSession(ctx);
+    // console.log(`index `, session);
+
+    if (session) {
+        const resp = await fetch('https://oauth.reddit.com/best.json?limit=7&sr_detail=true', {
+            headers: {
+                Authorization: `bearer ${session.accessToken}`,
+            },
+        });
+        const postsData = await resp.json();
+        console.log(2);
+        return {
+            props: { postsData: postsData.data.children },
+        };
+    }
+
+    return {
+        props: { postsData: null },
+    };
 };
 
 // const basicAuth = Buffer.from(`${process.env.USER_ID}:sNGEj6X7Uxevyrbf8nuvVTfXVHx22g`).toString('base64');

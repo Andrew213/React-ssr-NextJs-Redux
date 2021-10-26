@@ -7,6 +7,8 @@ export const useUserData = () => {
     const [data, setData] = useState({});
     const token = useContext(tokenContext);
 
+    const bar = 'https://reddit.com/r/popular/best.json?limit=7&sr_detail=true';
+
     useEffect(() => {
         async function getUserData() {
             if (token) {
