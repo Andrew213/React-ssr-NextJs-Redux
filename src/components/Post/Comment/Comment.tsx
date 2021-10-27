@@ -31,14 +31,15 @@ const commentControl: ListProps[] = [
 ];
 
 type CommentProps = {
-    avatar?: string;
-    nickName?: string;
+    authorAvatar?: string;
+    author?: string;
     published?: string;
     subreddit?: string;
+    body?: string;
     onChange?: (value: string) => void;
 };
 
-const Comment: React.FC<CommentProps> = ({ onChange, avatar, nickName, published, subreddit }) => {
+const Comment: React.FC<CommentProps> = ({ onChange, authorAvatar, author, published, subreddit, body }) => {
     return (
         <div className={styles.comment}>
             <div className={styles.comment__karmaWrapper}>
@@ -46,11 +47,9 @@ const Comment: React.FC<CommentProps> = ({ onChange, avatar, nickName, published
                 <div className={styles.comment__separator} />
             </div>
             <div className={styles.comment__main}>
-                <User_info className={styles.comment__userInfo} subreddit={subreddit} />
+                <User_info className={styles.comment__userInfo} subreddit={subreddit} author={author} />
                 <Typography As="p" className={styles.comment__text}>
-                    А также диаграммы связей неоднозначны и будут функционально разнесены на независимые элементы.
-                    Следует отметить, что начало повседневной работы по формированию позиции однозначно определяет
-                    каждого участника как способного принимать собственные решения.
+                    {body}
                 </Typography>
                 <div className={styles.comment__control}>
                     {commentControl.map(el => {
@@ -68,7 +67,6 @@ const Comment: React.FC<CommentProps> = ({ onChange, avatar, nickName, published
                     })}
                 </div>
             </div>
-            {/* <Comment /> */}
         </div>
     );
 };

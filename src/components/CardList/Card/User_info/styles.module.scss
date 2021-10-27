@@ -13,7 +13,7 @@
         align-items: center;
     }
 
-    &__nickName{
+    &__author{
         margin-left: 7px;
         color: $orange;
         &:hover {
@@ -21,7 +21,7 @@
         }
     }
 
-    &__avatar{
+    &__authorAvatar{
         border-radius: 50px;
     }
 
@@ -48,7 +48,7 @@
 
 @media(max-width: 400px){
     .userInfo{
-        &__nickName,
+        &__author,
         &__published
         {
             font-size: 10px;

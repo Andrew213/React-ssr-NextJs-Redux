@@ -4,20 +4,34 @@ import { GetServerSideProps, NextPage } from 'next';
 import cookie from 'cookie';
 import { getSession, useSession } from 'next-auth/client';
 
-const Index: NextPage = ({ postsData }) => {
-    console.log(`postsData `, postsData);
+export type PostType = {
+    author?: string;
+    created?: string;
+    id?: string;
+    permalink?: string;
+    bannerImg?: string;
+    headerImg?: string;
+    description?: string;
+    thumbnail?: string;
+    title?: string;
+    authorAvatar?: string;
+    subreddit?: string;
+};
+
+const Index: NextPage<Record<string, PostType[]>> = ({ postsData }) => {
     return (
         <MainLayout>
-            {postsData && <h3>{postsData[0].data.title}</h3>}
-            <CardList />
+            <CardList postsArr={postsData} />
         </MainLayout>
     );
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
     const session = await getSession(ctx);
-    // console.log(`index `, session);
+    const postsArr: PostType[] = [];
+    const commentsArr = [];
 
+    console.log(session);
     if (session) {
         const resp = await fetch('https://oauth.reddit.com/best.json?limit=7&sr_detail=true', {
             headers: {
@@ -25,9 +39,27 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
             },
         });
         const postsData = await resp.json();
-        console.log(2);
+        // console.log(postsData.data.children);
+        postsData.data.children.forEach((el: Record<string, any>) => {
+            const post = el.data;
+            const postObj: PostType = {
+                author: post.author,
+                created: post.created,
+                id: post.id,
+                permalink: post.permalink,
+                bannerImg: post.sr_detail.banner_img,
+                headerImg: post.sr_detail.header_img,
+                authorAvatar: post.sr_detail.icon_img,
+                title: post.sr_detail.title,
+                description: post.sr_detail.public_description,
+                thumbnail: post.thumbnail,
+                subreddit: post.subreddit,
+            };
+            postsArr.push(postObj);
+        });
+
         return {
-            props: { postsData: postsData.data.children },
+            props: { postsData: postsArr },
         };
     }
 

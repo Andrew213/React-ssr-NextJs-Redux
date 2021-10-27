@@ -71,6 +71,11 @@
         display: flex;
         margin-bottom: 37px;
     }
+
+    &__load{
+        display: flex;
+        justify-content: center;
+    }
 }
 
 .listItem{

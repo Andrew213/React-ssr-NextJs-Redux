@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import Typography from '@/lib/Typography/Typography';
 import Image from 'next/image';
 import Karma from '../CardList/Card/Karma/Karma';
-import banner2 from '@img/banner.jpg';
+import bannerImg2 from '@img/banner.jpg';
 import pic1 from '@img/gallery_1_1.jpg';
 import pic2 from '@img/gallery_1_2.jpg';
 import pic3 from '@img/gallery_2_1.jpg';
@@ -19,29 +19,35 @@ import List from '@/lib/List/List';
 import { dropDownList } from '@/utils/dropDownList';
 
 import styles from './styles.module.scss';
+import { CommentType } from '../CardList/Card/Card';
+import Loader from 'react-loader-spinner';
 
 type PostProps = {
     title?: string;
-    avatar?: string;
-    nickName?: string;
+    authorAvatar?: string;
+    author?: string;
     onClose?: () => void;
-    publicTime?: string;
+    created?: string;
     className?: string;
     subreddit?: string;
-    banner?: string;
+    bannerImg?: string;
+    permalink?: string;
+    comments?: any[];
     triggerNode?: React.RefObject<HTMLButtonElement>;
 };
 
 const Post: React.FC<PostProps> = ({
     triggerNode,
     title,
-    nickName,
-    publicTime,
-    avatar,
+    author,
+    created,
+    authorAvatar,
+    permalink,
+    comments,
     subreddit,
     onClose,
     className,
-    banner,
+    bannerImg,
 }) => {
     const getAnswer = useCallback((value: string) => {
         console.log(value);
@@ -80,7 +86,12 @@ const Post: React.FC<PostProps> = ({
                         <Typography As="h2" size={20} weight={400} className={styles.post__title}>
                             {title ? title : 'Here is any Title'}
                         </Typography>
-                        <User_info subreddit={subreddit} nickName={nickName} publicTime={publicTime} avatar={avatar} />
+                        <User_info
+                            subreddit={subreddit}
+                            author={author}
+                            created={created}
+                            authorAvatar={authorAvatar}
+                        />
                     </div>
                 </div>
                 <Typography As="p" className={styles.post__text} size={14} weight={400}>
@@ -92,7 +103,12 @@ const Post: React.FC<PostProps> = ({
                     обществу.
                 </Typography>
                 <figure className={styles.post__imgWrapper}>
-                    <Image src={banner ? banner : banner2} width={840} height={494} className={styles.post__banner} />
+                    <Image
+                        src={bannerImg ? bannerImg : bannerImg2}
+                        width={840}
+                        height={494}
+                        className={styles.post__bannerImg}
+                    />
                     <figcaption className={styles.post__imgCaption}>
                         Учитывая ключевые сценарии поведения, социально-экономическое развитие играет определяющее
                         значение.
@@ -194,15 +210,30 @@ const Post: React.FC<PostProps> = ({
                         );
                     })}
                 </div>
-                <CommentsForm nickName={nickName} />
-                <Comment
-                    onChange={handleCommentChange}
-                    avatar={avatar}
-                    nickName={nickName}
-                    published={publicTime}
-                    subreddit={subreddit}
-                />
+                {comments.length > 0 ? (
+                    <>
+                        <CommentsForm author={author} />
+                        {comments.map(cm => {
+                            const comment = cm.data;
+                            return (
+                                <Comment
+                                    key={comment.id}
+                                    onChange={handleCommentChange}
+                                    author={comment.author}
+                                    published={comment.created}
+                                    body={comment.body}
+                                    subreddit={comment.subreddit}
+                                />
+                            );
+                        })}
+                    </>
+                ) : (
+                    <div className={styles.post__load}>
+                        <Loader type="Circles" color="#cc6633" height={50} width={50} timeout={30000} />
+                    </div>
+                )}
             </div>
+            )
         </Portal>
     );
 };

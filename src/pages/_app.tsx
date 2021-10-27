@@ -23,9 +23,7 @@ const MyApp = ({ Component, pageProps, session }: AppType): ReactElement => {
         <CookiesProvider>
             <SessionProvider session={session} options={{ baseUrl: process.env.NEXTAUTH_URL }}>
                 <CommentProvider value={{ value: commentValue, onChange: setCommentValue }}>
-                    <tokenContext.Provider value={cookies.access_token}>
-                        <Component {...pageProps} />
-                    </tokenContext.Provider>
+                    <Component {...pageProps} />
                 </CommentProvider>
             </SessionProvider>
         </CookiesProvider>

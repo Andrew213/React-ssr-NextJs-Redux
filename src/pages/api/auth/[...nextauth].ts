@@ -11,7 +11,7 @@ export default NextAuth({
             type: 'oauth',
             version: '2.0',
             params: { grant_type: 'authorization_code' },
-            accessTokenUrl: ' https://www.reddit.com/api/v1/access_token',
+            accessTokenUrl: 'https://www.reddit.com/api/v1/access_token',
             authorizationUrl: 'https://www.reddit.com/api/v1/authorize?response_type=code&duration=permanent',
             profileUrl: 'https://oauth.reddit.com/api/v1/me?raw_json=1',
             profile: profile => {

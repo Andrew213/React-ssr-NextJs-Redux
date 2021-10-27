@@ -10,24 +10,32 @@ import Karma from './Karma/Karma';
 import Icon from '@/lib/Icon/Icon';
 import useWindowSize from '@/hooks/useWindowSize';
 import CardControlMobile from './CardControlMobile/CardControlMobile';
-import Post from '@/components/Post/Post';
+import Link from 'next/link';
 import User_info from './User_info/User_info';
 import { dropDownList } from '@/utils/dropDownList';
+import Post from '@/components/Post/Post';
+import { useRouter } from 'next/router';
+import { PostType } from '@/pages';
 
 import styles from './styles.module.scss';
 
-type CardProps = {
-    nickName?: string;
-    title?: string;
-    subbreddit?: string;
-    publicTime?: string;
-    thumbnail?: string;
-    avatar?: string;
+// type CardProps = {
+//     author?: string;
+//     title?: string;
+//     subreddit?: string;
+//     created?: string;
+//     thumbnail?: string;
+//     authorAvatar?: string;
+//     onPostClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+//     isPostOpen?: boolean;
+//     bannerImg?: string;
+//     permalink?: string;
+// };
+
+interface CardProps extends PostType {
     onPostClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     isPostOpen?: boolean;
-    banner?: string;
-    permaLink?: string;
-};
+}
 
 export type CommentType = {
     author?: string;
@@ -36,27 +44,32 @@ export type CommentType = {
 };
 
 const Card: React.FC<CardProps> = ({
-    subbreddit,
-    nickName,
+    subreddit,
+    author,
     thumbnail,
     title,
-    avatar,
-    publicTime,
-    banner,
-    permaLink,
+    authorAvatar,
+    created,
+    bannerImg,
+    headerImg,
+    permalink,
+    id,
 }) => {
     const { width, height } = useWindowSize();
     const [isPostOpen, setIsPostOpen] = React.useState(false);
-    const [comments, setComments] = React.useState<CommentType[]>([]);
+    const [comments, setComments] = React.useState([]);
 
-    React.useEffect(() => {
+    const handlePostClick = React.useCallback(() => {
+        void router.push(`/?link=${permalink}`, undefined, { shallow: true });
         const commentsClone = comments.slice();
         const getComments = async () => {
-            const resp = await fetch(`https://api.reddit.com${permaLink}`);
+            const resp = await fetch(`https://api.reddit.com${permalink}`);
 
             const commentsFromApi = await resp.json();
 
             const commentsArr = commentsFromApi[1]?.data?.children;
+
+            setComments(commentsArr);
 
             commentsArr.forEach((comm: any) => {
                 const { kind, data } = comm;
@@ -73,21 +86,19 @@ const Card: React.FC<CardProps> = ({
         };
 
         void getComments();
-
-        setComments(commentsClone);
-    }, []);
-
-    const handlePostClick = React.useCallback(() => {
         setIsPostOpen(prev => !prev);
-        console.log(comments);
-    }, [comments]);
+    }, [permalink]);
 
     const handleOnPostClose = React.useCallback(() => {
         setIsPostOpen(false);
     }, []);
-    const titleRef = React.useRef(null);
+    // const titleRef = React.useRef(null);
 
     const WIDTH_990 = width > 990;
+
+    const titleRef = React.useRef(null);
+
+    const router = useRouter();
 
     return (
         <>
@@ -98,13 +109,13 @@ const Card: React.FC<CardProps> = ({
                     <Image src={thumbnail ? thumbnail : pic} layout="fill" quality={100} className={styles.card__img} />
                 </div>
                 <div className={styles.card__info}>
+                    {/* <Link href={'/[id]'} as={`/${id}`}> */}
                     <button onClick={handlePostClick} ref={titleRef}>
-                        <Typography As="h2" size={20} weight={400} className={styles.card__title}>
-                            {title ? title : 'Here is any Title'}
-                        </Typography>
+                        <h2 className={styles.card__title}>{title ? title : 'Here is any Title'}</h2>
                     </button>
+                    {/* </Link> */}
                     {/* USER_INFO */}
-                    <User_info publicTime={publicTime} avatar={avatar} nickName={nickName} />
+                    <User_info created={`${created}`} authorAvatar={authorAvatar} author={author} />
                     <div className={styles.card__viewed}>
                         <Icon component={viewed} />
                         <p className={styles.card__viewedText}>1 час назад</p>
@@ -153,12 +164,14 @@ const Card: React.FC<CardProps> = ({
             >
                 <Post
                     triggerNode={titleRef}
-                    nickName={nickName}
-                    avatar={avatar}
-                    publicTime={publicTime}
-                    banner={banner}
+                    author={author}
+                    authorAvatar={authorAvatar}
+                    permalink={permalink}
+                    created={created}
+                    bannerImg={bannerImg}
                     title={title}
-                    subreddit={subbreddit}
+                    comments={comments}
+                    subreddit={subreddit}
                     onClose={handleOnPostClose}
                 />
             </CSSTransition>

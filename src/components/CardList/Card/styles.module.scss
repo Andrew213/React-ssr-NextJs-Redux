@@ -31,9 +31,10 @@
         margin-bottom: 8px;
         transition: color 0.3s;
         max-width: 672px;
+        font-size: 20px;
+        cursor: pointer;
         text-overflow: ellipsis;
         white-space: nowrap;
-        overflow: hidden;
         text-align: left;
         &:hover {
             color: $orange;
