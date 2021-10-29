@@ -33,13 +33,14 @@ const commentControl: ListProps[] = [
 type CommentProps = {
     authorAvatar?: string;
     author?: string;
-    published?: string;
+    published?: number;
+    replies?: any[] | undefined;
     subreddit?: string;
     body?: string;
     onChange?: (value: string) => void;
 };
 
-const Comment: React.FC<CommentProps> = ({ onChange, authorAvatar, author, published, subreddit, body }) => {
+const Comment: React.FC<CommentProps> = ({ onChange, authorAvatar, author, published, subreddit, body, replies }) => {
     return (
         <div className={styles.comment}>
             <div className={styles.comment__karmaWrapper}>
@@ -66,6 +67,21 @@ const Comment: React.FC<CommentProps> = ({ onChange, authorAvatar, author, publi
                         );
                     })}
                 </div>
+                {replies &&
+                    replies.map((cm, i) => {
+                        const comment = cm.data;
+                        const replies = comment?.replies?.data?.children;
+                        if (comment.body !== undefined) {
+                            return (
+                                <Comment
+                                    replies={replies}
+                                    body={comment.body}
+                                    author={comment.author}
+                                    key={`${cm.data.id}${comment.author}`}
+                                />
+                            );
+                        }
+                    })}
             </div>
         </div>
     );

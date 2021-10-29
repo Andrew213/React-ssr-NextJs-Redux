@@ -3,22 +3,25 @@ import MainLayout from '@/components/MainLayout/MainLayout';
 import { GetServerSideProps, NextPage } from 'next';
 import cookie from 'cookie';
 import { getSession, useSession } from 'next-auth/client';
+import snoowrap from 'snoowrap';
 
-export type PostType = {
+export interface PostType {
     author?: string;
-    created?: string;
+    created?: string | number;
     id?: string;
     permalink?: string;
     bannerImg?: string;
+    thumbnail_height?: number;
+    thumbnail_width?: number;
     headerImg?: string;
     description?: string;
     thumbnail?: string;
     title?: string;
     authorAvatar?: string;
     subreddit?: string;
-};
+}
 
-const Index: NextPage<Record<string, PostType[]>> = ({ postsData }) => {
+const Index: NextPage<Record<string, PostType[]>> = ({ postsData, topPosts }) => {
     return (
         <MainLayout>
             <CardList postsArr={postsData} />
@@ -28,38 +31,72 @@ const Index: NextPage<Record<string, PostType[]>> = ({ postsData }) => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
     const session = await getSession(ctx);
-    const postsArr: PostType[] = [];
-    const commentsArr = [];
 
-    console.log(session);
     if (session) {
-        const resp = await fetch('https://oauth.reddit.com/best.json?limit=7&sr_detail=true', {
-            headers: {
-                Authorization: `bearer ${session.accessToken}`,
-            },
-        });
-        const postsData = await resp.json();
-        // console.log(postsData.data.children);
-        postsData.data.children.forEach((el: Record<string, any>) => {
-            const post = el.data;
-            const postObj: PostType = {
-                author: post.author,
-                created: post.created,
-                id: post.id,
-                permalink: post.permalink,
-                bannerImg: post.sr_detail.banner_img,
-                headerImg: post.sr_detail.header_img,
-                authorAvatar: post.sr_detail.icon_img,
-                title: post.sr_detail.title,
-                description: post.sr_detail.public_description,
-                thumbnail: post.thumbnail,
-                subreddit: post.subreddit,
-            };
-            postsArr.push(postObj);
+        const r = new snoowrap({
+            userAgent: ctx.req.headers['user-agent'],
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            refreshToken: session.refreshToken as string,
+            accessToken: session.accessToken as string,
         });
 
+        const top = await Promise.all(
+            (await r.getTop('', { limit: 5, show: 'all' })).map(async post => {
+                const postObj: PostType = {
+                    title: post.title,
+                    thumbnail: post.thumbnail,
+                    thumbnail_height: post.thumbnail_height,
+                    thumbnail_width: post.thumbnail_width,
+                    authorAvatar: await post.author.icon_img,
+                    author: post.author.name,
+                    id: post.id,
+                    permalink: post.permalink,
+                    created: post.created,
+                };
+                // const postImg = post.author.toJSON();
+                return postObj;
+            })
+        );
+
+        // const tops = (await r.getTop('', { limit: 2, show: 'all' })).map(post => post.id);
+        // const top = await r.getSubmission('qhtlsp').author.icon_img;
+        // const top = await Promise.all(
+        //     tops.map(async postId => {
+        //         const post = await r.getSubmission(postId).author.icon_img;
+        //         return post;
+        //     })
+        // );
+        // const users = await top.map(post => post.author.name);
+
+        // const resp = await fetch('https://oauth.reddit.com/best.json?sr_detail=true', {
+        //     headers: {
+        //         Authorization: `bearer ${session.accessToken}`,
+        //     },
+        // });
+        // const postsData = await resp.json();
+        // postsData.data.children.forEach((el: Record<string, any>) => {
+        //     const post = el.data;
+        //     const postObj: PostType = {
+        //         author: post.author,
+        //         created: post.created,
+        //         id: post.id,
+        //         permalink: post.permalink,
+        //         bannerImg: post.sr_detail.banner_img,
+        //         headerImg: post.sr_detail.header_img,
+        //         authorAvatar: post.sr_detail.icon_img,
+        //         title: post.sr_detail.title,
+        //         description: post.sr_detail.public_description,
+        //         thumbnail: post.thumbnail,
+        //         subreddit: post.subreddit,
+        //     };
+        //     postsArr.push(postObj);
+        // });
+        // return {
+        //     props: { postsData: postsArr },
+        // };
         return {
-            props: { postsData: postsArr },
+            props: { postsData: top, topPosts: top },
         };
     }
 
@@ -67,37 +104,5 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         props: { postsData: null },
     };
 };
-
-// const basicAuth = Buffer.from(`${process.env.USER_ID}:sNGEj6X7Uxevyrbf8nuvVTfXVHx22g`).toString('base64');
-
-// export const getServerSideProps: GetServerSideProps = async ({ query, req, res }) => {
-//     const response = await fetch('https://www.reddit.com/api/v1/access_token', {
-//         method: 'POST',
-//         headers: {
-//             'Authorization': 'Basic ' + basicAuth,
-//             'Content-Type': 'application/x-www-form-urlencoded',
-//         },
-//         body: `grant_type=authorization_code&code=${query.code}&redirect_uri=http://localhost:8080`,
-//     });
-
-//     const tk = await response.json();
-
-//     if (tk.access_token) {
-//         res.setHeader(
-//             'Set-Cookie',
-//             cookie.serialize('access_token', tk.access_token, {
-//                 // httpOnly: true,
-//                 secure: process.env.NODE_ENV !== 'development',
-//                 maxAge: 3600,
-//                 sameSite: 'strict',
-//                 path: './',
-//             })
-//         );
-//     }
-
-//     return {
-//         props: { token: tk.access_token || null },
-//     };
-// };
 
 export default Index;

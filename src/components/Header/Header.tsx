@@ -20,6 +20,9 @@ type HeaderProps = {
 
 const Header: React.FC<HeaderProps> = ({ className }) => {
     const [session, load] = useSession();
+
+    const userAvatar = session?.user?.image.split('?')[0];
+
     return (
         <>
             <header className={cn(className, styles.header)}>
@@ -57,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                     {session ? (
                         <>
                             <button className={styles.header__profileLink} onClick={() => signOut()}>
-                                <img src={session.user.image} className={styles.header__avatar} />
+                                <img src={userAvatar} className={styles.header__avatar} />
                             </button>
                             <button className={styles.header__nickNameLink} onClick={() => signOut()}>
                                 <Typography As="p" size={20} className={styles.header__nickName}>

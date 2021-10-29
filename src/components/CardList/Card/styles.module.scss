@@ -21,6 +21,12 @@
         border-radius: 3px;
     }
 
+    &__img_load{
+        display: flex;
+        margin-top: 30px;
+        justify-content: center;
+    }
+
     &__info{
         display: flex;
         padding-top: 10px;
@@ -28,9 +34,10 @@
     }
 
     &__title{
-        margin-bottom: 8px;
         transition: color 0.3s;
-        max-width: 672px;
+        padding-bottom: 8px;
+        max-width: 600px;
+        overflow: hidden;
         font-size: 20px;
         cursor: pointer;
         text-overflow: ellipsis;

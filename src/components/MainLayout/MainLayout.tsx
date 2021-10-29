@@ -1,9 +1,8 @@
 import React from 'react';
 import Head from 'next/head';
 import Header from '../Header/Header';
-import { UserContextProvider } from '@/hooks/userContext';
 import { withCookies } from 'react-cookie';
-
+import { useSession } from 'next-auth/client';
 import styles from './styles.module.scss';
 
 type LayoutProps = {
@@ -21,10 +20,8 @@ const MainLayout: React.FC<LayoutProps> = ({ children, title = 'Blog', token }) 
                 <meta name="description" content="some description" />
                 <meta charSet="utf-8" />
             </Head>
-            {/* <UserContextProvider> */}
             <Header className={styles.layout} />
             <main className={styles.layout}>{children}</main>
-            {/* </UserContextProvider> */}
         </>
     );
 };

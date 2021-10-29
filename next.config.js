@@ -15,6 +15,8 @@ module.exports = {
   env: {
     NEXTAUTH_URL: process.env.NEXTAUTH_URL_INTERNAL,
     CLIENT_ID: process.env.CLIENT_ID,
+    CLIENT_NAME: process.env.CLIENT_NAME,
+    CLIENT_PASSWORD: process.env.CLIENT_PASSWORD,
     CLIENT_SECRET: process.env.CLIENT_SECRET,
   },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
@@ -39,6 +41,6 @@ module.exports = {
     prependData: `@import "~@styles/variables.scss";`,
   },
   images: {
-    domains: ['b.thumbs.redditmedia.com', 'a.thumbs.redditmedia.com', 'e.thumbs.redditmedia.com'],
+    domains: ['b.thumbs.redditmedia.com', 'a.thumbs.redditmedia.com', 'e.thumbs.redditmedia.com', 'styles.redditmedia.com', 'www.redditstatic.com'],
   },
 }

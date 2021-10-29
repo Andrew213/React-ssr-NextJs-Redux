@@ -3,38 +3,25 @@ import Typography from '@/lib/Typography/Typography';
 import Image from 'next/image';
 import Karma from '../CardList/Card/Karma/Karma';
 import bannerImg2 from '@img/banner.jpg';
-import pic1 from '@img/gallery_1_1.jpg';
-import pic2 from '@img/gallery_1_2.jpg';
-import pic3 from '@img/gallery_2_1.jpg';
-import pic4 from '@img/gallery_2_2.jpg';
-import pic5 from '@img/gallery_2_3.jpg';
-import pic6 from '@img/gallery_3_1.jpg';
-import pic7 from '@img/gallery_3_2.jpg';
 import CommentsForm from './Comment/CommentForm/CommentForm';
 import Comment from './Comment/Comment';
-import cn from 'classnames';
 import User_info from '../CardList/Card/User_info/User_info';
 import Portal from '@/lib/Portal/Portal';
 import List from '@/lib/List/List';
 import { dropDownList } from '@/utils/dropDownList';
-
-import styles from './styles.module.scss';
 import { CommentType } from '../CardList/Card/Card';
 import Loader from 'react-loader-spinner';
+import { useRouter } from 'next/router';
+import { PostType } from '@/pages';
 
-type PostProps = {
-    title?: string;
-    authorAvatar?: string;
-    author?: string;
+import styles from './styles.module.scss';
+
+interface PostProps extends PostType {
     onClose?: () => void;
-    created?: string;
     className?: string;
-    subreddit?: string;
-    bannerImg?: string;
-    permalink?: string;
-    comments?: any[];
+    comments?: CommentType[];
     triggerNode?: React.RefObject<HTMLButtonElement>;
-};
+}
 
 const Post: React.FC<PostProps> = ({
     triggerNode,
@@ -42,13 +29,16 @@ const Post: React.FC<PostProps> = ({
     author,
     created,
     authorAvatar,
-    permalink,
+    thumbnail_height,
+    thumbnail_width,
     comments,
     subreddit,
     onClose,
     className,
     bannerImg,
 }) => {
+    const router = useRouter();
+
     const getAnswer = useCallback((value: string) => {
         console.log(value);
     }, []);
@@ -68,6 +58,7 @@ const Post: React.FC<PostProps> = ({
         const handleClick = (e: MouseEvent) => {
             if (e.target instanceof Node && e.target !== triggerBtn && !postRef.current?.contains(e.target)) {
                 onClose();
+                void router.push(`/`, undefined, { shallow: true });
             }
         };
 
@@ -82,117 +73,27 @@ const Post: React.FC<PostProps> = ({
             <div className={styles.post} ref={postRef}>
                 <div className={styles.post__header}>
                     <Karma />
-                    <div className={styles.post__user}>
-                        <Typography As="h2" size={20} weight={400} className={styles.post__title}>
-                            {title ? title : 'Here is any Title'}
-                        </Typography>
-                        <User_info
-                            subreddit={subreddit}
-                            author={author}
-                            created={created}
-                            authorAvatar={authorAvatar}
-                        />
-                    </div>
+                    <User_info
+                        className={styles.post__userInfo}
+                        subreddit={subreddit}
+                        author={author}
+                        created={created}
+                        authorAvatar={authorAvatar}
+                    />
                 </div>
-                <Typography As="p" className={styles.post__text} size={14} weight={400}>
-                    Есть над чем задуматься: тщательные исследования конкурентов представляют собой не что иное, как
-                    квинтэссенцию победы маркетинга над разумом и должны быть ассоциативно распределены по отраслям.
-                    Прежде всего, начало повседневной работы по формированию позиции однозначно фиксирует необходимость
-                    кластеризации усилий. Но сторонники тоталитаризма в науке и по сей день остаются уделом либералов,
-                    которые жаждут быть превращены в посмешище, хотя само их существование приносит несомненную пользу
-                    обществу.
+                <Typography As="p" className={styles.post__text} size={28} weight={400}>
+                    {title}
                 </Typography>
-                <figure className={styles.post__imgWrapper}>
+                <div className={styles.post__imgWrapper}>
                     <Image
                         src={bannerImg ? bannerImg : bannerImg2}
-                        width={840}
-                        height={494}
+                        width={thumbnail_width * 3}
+                        height={thumbnail_height * 3}
+                        quality={100}
                         className={styles.post__bannerImg}
                     />
-                    <figcaption className={styles.post__imgCaption}>
-                        Учитывая ключевые сценарии поведения, социально-экономическое развитие играет определяющее
-                        значение.
-                    </figcaption>
-                </figure>
-                <Typography As="p" className={styles.post__text} size={14} weight={400}>
-                    Безусловно, глубокий уровень погружения создаёт необходимость включения в производственный план
-                    целого ряда внеочередных мероприятий с учётом комплекса системы массового участия. Внезапно,
-                    сделанные на базе интернет-аналитики выводы освещают чрезвычайно интересные особенности картины в
-                    целом, однако конкретные выводы, разумеется, описаны максимально подробно.
-                </Typography>
-                <div className={cn(styles.post__gallery, styles.post__gallery_first)}>
-                    <figure className={styles.post__imgWrapper}>
-                        <div className={styles.post__gallery2_img}>
-                            <Image quality={100} src={pic1} layout="responsive" />
-                        </div>
-                        <figcaption className={cn(styles.post__imgCaption, styles.post__imgCaption_first)}>
-                            Господа, высококачественный прототип будущего проекта играет определяющее значение для как
-                            самодостаточных, так и внешне зависимых концептуальных решений.
-                        </figcaption>
-                    </figure>
-                    <figure className={styles.post__imgWrapper}>
-                        <div className={styles.post__gallery2_img}>
-                            <Image quality={100} src={pic2} layout="responsive" />
-                        </div>
-                        <figcaption className={cn(styles.post__imgCaption, styles.post__imgCaption_first)}>
-                            Принимая во внимание показатели успешности, разбор внешних противодействий обеспечивает
-                            актуальность форм воздействия.
-                        </figcaption>
-                    </figure>
                 </div>
-                <Typography As="p" className={styles.post__text} size={14} weight={400}>
-                    Разнообразный и богатый опыт говорит нам, что выбранный нами инновационный путь обеспечивает
-                    широкому кругу (специалистов) участие в формировании новых принципов формирования
-                    материально-технической и кадровой базы. Также как существующая теория в значительной степени
-                    обусловливает важность благоприятных перспектив. Для современного мира консультация с широким
-                    активом однозначно определяет каждого участника как способного принимать собственные решения касаемо
-                    приоритизации разума над эмоциями!
-                </Typography>
-                <div className={cn(styles.post__gallery, styles.post__gallery_second)}>
-                    <figure className={styles.post__imgWrapper}>
-                        <Image src={pic3} width={267} height={193} />
-                        <figcaption className={cn(styles.post__imgCaption, styles.post__imgCaption_first)}>
-                            Таким образом, разбавленное изрядной долей эмпатии, рациональное мышление играет важную
-                            роль.
-                        </figcaption>
-                    </figure>
-                    <figure className={styles.post__imgWrapper}>
-                        <Image src={pic4} width={267} height={193} />
-                        <figcaption className={cn(styles.post__imgCaption, styles.post__imgCaption_first)}>
-                            Не следует, однако, забывать, что глубокий уровень способствует.
-                        </figcaption>
-                    </figure>
 
-                    <figure className={styles.post__imgWrapper}>
-                        <Image src={pic5} width={267} height={193} />
-                        <figcaption className={cn(styles.post__imgCaption, styles.post__imgCaption_first)}>
-                            Но сторонники тоталитаризма в науке, инициированные исключительно.
-                        </figcaption>
-                    </figure>
-                </div>
-                <Typography As="p" className={styles.post__text} size={14} weight={400}>
-                    Вот вам яркий пример современных тенденций - постоянный количественный рост и сфера нашей активности
-                    обеспечивает актуальность глубокомысленных рассуждений! Не следует, однако, забывать, что
-                    высококачественный прототип будущего проекта предполагает независимые способы реализации дальнейших
-                    направлений развития.
-                </Typography>
-                <div className={cn(styles.post__gallery, styles.post__gallery_third)}>
-                    <figure className={styles.post__imgWrapper}>
-                        <Image src={pic6} width={410} height={297} />
-                        <figcaption className={cn(styles.post__imgCaption, styles.post__imgCaption_first)}>
-                            Значимость этих проблем настолько очевидна, что разбавленное изрядной долей эмпатии,
-                            рациональное мышление говорит о возможностях вывода текущих активов.
-                        </figcaption>
-                    </figure>
-
-                    <figure className={styles.post__imgWrapper}>
-                        <Image src={pic7} width={410} height={297} />
-                        <figcaption className={cn(styles.post__imgCaption, styles.post__imgCaption_first)}>
-                            Господа, понимание сути ресурсосберегающих технологий обеспечивает актуальность новых
-                            принципов формирования материально-технической и кадровой базы!
-                        </figcaption>
-                    </figure>
-                </div>
                 <div className={styles.post__control}>
                     {dropDownList.map((el, i) => {
                         if (el.id === 'Close') {
@@ -213,11 +114,12 @@ const Post: React.FC<PostProps> = ({
                 {comments.length > 0 ? (
                     <>
                         <CommentsForm author={author} />
-                        {comments.map(cm => {
-                            const comment = cm.data;
+                        {comments.map((comment, i) => {
+                            console.log(comment);
                             return (
                                 <Comment
-                                    key={comment.id}
+                                    key={i}
+                                    replies={comment.replies}
                                     onChange={handleCommentChange}
                                     author={comment.author}
                                     published={comment.created}

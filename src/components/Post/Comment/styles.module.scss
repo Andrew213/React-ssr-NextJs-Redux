@@ -1,6 +1,13 @@
 .comment{
     padding-top: 50px;
     display: flex;
+
+    &__main{
+        max-width: 800px;
+        word-wrap: break-word;
+        // overflow: hidden;
+    }
+    // flex-direction: column;
     &__karmaWrapper{
         display: flex;
         flex-direction: column;
@@ -19,6 +26,8 @@
         }
         
     }
+
+    
 
     &__separator{
         width: 3px;
@@ -48,4 +57,8 @@
         margin-right: 27px;
     }
     // align-items: center;
+}
+
+.comment__main > .comment{
+margin-left: 15px;
 }

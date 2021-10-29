@@ -2,11 +2,12 @@
     position: absolute;
     left: 50%;
     max-width: 960px;
+    width: 100%;
     top: 200px;
     background-color: #fff;
     box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.15);
     border-radius: 7px;
-    padding: 50px 60px;
+    padding: 30px 40px;
 
     &__title{
         margin-bottom: 8px;
@@ -29,47 +30,32 @@
         margin-bottom: 25px;
     }
 
+    &__userInfo{
+        margin-top: 8px;
+        margin-left: 20px;
+    }
+
     &__text{
         line-height: 24px;
+        line-height: 34px;
+        text-align: center;
         &_first{
             color: red;
         }
     }
 
     &__imgWrapper{
-        display: block;
-        // position: relative;
-        margin: 0;
-        margin-top: 30px;
-    }
-
-
-    &__imgCaption{
-        margin-top: 15px;
-        margin-bottom: 30px;
-        font-size: 12px;
-        color: $grey-99;
-        line-height: 20px;
-    }
-
-    &__gallery{
         display: flex;
-        justify-content: space-between;
-    }
-
-    &__imgCaption_first{
-        max-width: 380px;
-    }
-
-    &__gallery_third{
-        padding-bottom: 30px;
-        border-bottom: 1px solid $grey-d9;
-        margin-bottom: 18px;
+        justify-content: center;
+        margin: 0;
+        margin-bottom: 30px;
+        margin-top: 30px;
     }
 
     &__control{
         display: flex;
-        margin-bottom: 37px;
+        justify-content: center;
+        margin-bottom: 30px;
     }
 
     &__load{
@@ -104,4 +90,3 @@
     }
    
 }
-
