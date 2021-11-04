@@ -1,8 +1,12 @@
 .dropDown{
     cursor: pointer;
     // width: 100%;
+    position: relative;
     &__listContainer{
-        position: relative;
+        position: absolute;
+        // position: relative;
+        left: 0;
+        top: 30px;
     }
     &__list{
         position: absolute;

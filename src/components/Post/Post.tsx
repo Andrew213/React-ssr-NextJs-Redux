@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { FocusEventHandler, useCallback, useEffect, useRef } from 'react';
 import Typography from '@/lib/Typography/Typography';
 import Image from 'next/image';
 import Karma from '../CardList/Card/Karma/Karma';
@@ -11,8 +11,11 @@ import List from '@/lib/List/List';
 import { dropDownList } from '@/utils/dropDownList';
 import { CommentType } from '../CardList/Card/Card';
 import Loader from 'react-loader-spinner';
+import Scroll, { Element } from 'react-scroll';
 import { useRouter } from 'next/router';
 import { PostType } from '@/pages';
+import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
+import { highlightMatches } from '@/utils/highlightMatches';
 
 import styles from './styles.module.scss';
 
@@ -20,8 +23,14 @@ interface PostProps extends PostType {
     onClose?: () => void;
     className?: string;
     comments?: CommentType[];
+    updateComments?: () => void;
     triggerNode?: React.RefObject<HTMLButtonElement>;
 }
+
+type initTextT = {
+    commentId?: string;
+    text: string;
+};
 
 const Post: React.FC<PostProps> = ({
     triggerNode,
@@ -32,24 +41,79 @@ const Post: React.FC<PostProps> = ({
     thumbnail_height,
     thumbnail_width,
     comments,
+    updateComments,
     subreddit,
+    score,
+    id,
     onClose,
     className,
     bannerImg,
 }) => {
     const router = useRouter();
 
-    const getAnswer = useCallback((value: string) => {
-        console.log(value);
-    }, []);
+    const [initText, setInitText] = React.useState<initTextT>({ commentId: null, text: '' });
+    const [postComments, setPostComments] = React.useState([]);
+    const commentFormRef = React.useRef(null);
 
-    const handleCommentChange = useCallback((value: string) => {
+    React.useEffect(() => {
+        comments.length > 0 && setPostComments(comments);
+    }, [comments]);
+
+    const getAnswer = (dataComment: Record<string, string>) => {
+        const { commentId, author } = dataComment;
+
+        Scroll.scroller.scrollTo('commentForm', {
+            smooth: 'easeInOut',
+            offset: -300,
+        });
+        setInitText({ commentId: commentId, text: `${author}, ` });
+        commentFormRef?.current.focus();
+    };
+
+    const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setInitText({ ...initText, text: e.target.value });
+    };
+
+    const handleCommentChange = useCallback((value: string, dataComment) => {
         switch (value) {
             case 'Answer':
-                getAnswer(value);
+                getAnswer(dataComment);
                 break;
         }
     }, []);
+
+    const sendComment = useCallback(
+        (e: React.MouseEvent) => {
+            e.preventDefault();
+
+            const sendRep = async () => {
+                const res = await fetch('/api/comments/sendComment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        commentData: initText,
+                        postId: id,
+                    }),
+                });
+                const foo = await res.json();
+                console.log(foo);
+                const resp = await fetch(`/api/comments/getPostComments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ commentsCount: 5, postId: id, repliesCount: 3 }),
+                });
+                const commentsArr = await resp.json();
+                setPostComments(commentsArr);
+            };
+            void sendRep();
+            setInitText({ commentId: null, text: '' });
+        },
+        [id, initText]
+    );
 
     const postRef = useRef<HTMLDivElement>(null);
 
@@ -70,9 +134,9 @@ const Post: React.FC<PostProps> = ({
 
     return (
         <Portal className={className}>
-            <div className={styles.post} ref={postRef}>
+            <div style={{ color: 'red' }} className={styles.post} ref={postRef}>
                 <div className={styles.post__header}>
-                    <Karma />
+                    <Karma className={styles.post__karma} score={score} />
                     <User_info
                         className={styles.post__userInfo}
                         subreddit={subreddit}
@@ -81,6 +145,7 @@ const Post: React.FC<PostProps> = ({
                         authorAvatar={authorAvatar}
                     />
                 </div>
+
                 <Typography As="p" className={styles.post__text} size={28} weight={400}>
                     {title}
                 </Typography>
@@ -113,18 +178,26 @@ const Post: React.FC<PostProps> = ({
                 </div>
                 {comments.length > 0 ? (
                     <>
-                        <CommentsForm author={author} />
-                        {comments.map((comment, i) => {
-                            console.log(comment);
+                        <Element name="commentForm">
+                            <CommentsForm
+                                commentFormRef={commentFormRef}
+                                onSendComment={sendComment}
+                                defaultValue={initText.text}
+                                onChange={handleOnChange}
+                            />
+                        </Element>
+                        {postComments.map((comment, i) => {
                             return (
                                 <Comment
-                                    key={i}
-                                    replies={comment.replies}
+                                    key={comment.id}
                                     onChange={handleCommentChange}
                                     author={comment.author}
-                                    published={comment.created}
+                                    score={comment.score}
+                                    created={comment.created}
                                     body={comment.body}
-                                    subreddit={comment.subreddit}
+                                    id={comment.id}
+                                    authorImage={comment.authorImage}
+                                    replies={comment.replies}
                                 />
                             );
                         })}
@@ -135,7 +208,6 @@ const Post: React.FC<PostProps> = ({
                     </div>
                 )}
             </div>
-            )
         </Portal>
     );
 };

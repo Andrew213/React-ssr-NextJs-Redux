@@ -13,6 +13,7 @@ import User_info from './User_info/User_info';
 import { dropDownList } from '@/utils/dropDownList';
 import Loader from 'react-loader-spinner';
 import Post from '@/components/Post/Post';
+import { Link, animateScroll as scroll } from 'react-scroll';
 import { useRouter } from 'next/router';
 import { PostType } from '@/pages';
 
@@ -23,13 +24,22 @@ interface CardProps extends PostType {
     isPostOpen?: boolean;
 }
 
+export interface replyI {
+    author: string;
+    authorImg: string;
+    replies?: replyI[];
+}
+
 export interface CommentType {
     author?: string;
     body?: string;
     id?: string;
+    score?: number;
     subreddit?: string;
+    repliesImg?: replyI[];
     created?: number;
-    replies?: CommentType[] | undefined;
+    authorImage?: string;
+    replies?: any;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -39,6 +49,7 @@ const Card: React.FC<CardProps> = ({
     title,
     authorAvatar,
     created,
+    score,
     thumbnail_height,
     thumbnail_width,
     permalink,
@@ -47,47 +58,24 @@ const Card: React.FC<CardProps> = ({
     const { width, height } = useWindowSize();
     const [isPostOpen, setIsPostOpen] = React.useState(false);
     const [comments, setComments] = React.useState([]);
-    const router = useRouter();
 
-    const handlePostClick = () => {
-        void router.push(`/?link=${permalink}`, undefined, { shallow: true });
-
-        const commentsClone = comments.slice();
-
+    const handlePostClick = React.useCallback(() => {
         const getComments = async () => {
-            const resp = await fetch('/api/comments/getPostComments', {
+            const resp = await fetch(`/api/comments/getPostComments`, {
                 method: 'POST',
                 headers: {
-                    'Content-type': 'application/json',
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ postId: id }),
+                body: JSON.stringify({ commentsCount: 5, postId: id, repliesCount: 3 }),
             });
-            const answ = await resp.json();
-            console.log(answ);
-
-            // const resp = await fetch(`https://api.reddit.com${permalink}`);
-            // const commentsFromApi = await resp.json();
-            // const commentsArr = commentsFromApi[1]?.data?.children;
-            // commentsArr.forEach((comm: any) => {
-            //     const { kind, data } = comm;
-            //     const cmt: CommentType = {};
-            //     if (data.author !== '[deleted]') {
-            //         cmt.author = data.author;
-            //         cmt.body = data.body;
-            //         cmt.id = `${data.id}${data.link_id}`;
-            //         cmt.subreddit = data.subreddit;
-            //         cmt.created = data.created;
-            //         cmt.replies = data?.replies?.data?.children;
-            //         commentsClone.push(cmt);
-            //     }
-            // });
-            // setComments(commentsClone);
+            const commentsArr = await resp.json();
+            setComments(commentsArr);
         };
 
         void getComments();
 
         setIsPostOpen(prev => !prev);
-    };
+    }, []);
 
     const handleOnPostClose = React.useCallback(() => {
         setIsPostOpen(false);
@@ -96,6 +84,10 @@ const Card: React.FC<CardProps> = ({
     const WIDTH_990 = width > 990;
 
     const titleRef = React.useRef(null);
+
+    const scrollToTop = () => {
+        scroll.scrollTo(100);
+    };
 
     return (
         <>
@@ -117,9 +109,11 @@ const Card: React.FC<CardProps> = ({
                     )}
                 </div>
                 <div className={styles.card__info}>
-                    <button onClick={handlePostClick} ref={titleRef}>
-                        <h2 className={styles.card__title}>{title ? title : 'Here is any Title'}</h2>
-                    </button>
+                    <Link to="" onClick={scrollToTop}>
+                        <button onClick={handlePostClick} ref={titleRef}>
+                            <h2 className={styles.card__title}>{title ? title : 'Here is any Title'}</h2>
+                        </button>
+                    </Link>
                     <User_info created={`${created}`} authorAvatar={authorAvatar} author={author} />
                     <div className={styles.card__viewed}>
                         <Icon component={viewed} />
@@ -148,7 +142,7 @@ const Card: React.FC<CardProps> = ({
                                 );
                             })}
                         </DropDown>
-                        {WIDTH_990 && <Karma />}
+                        {WIDTH_990 && <Karma className={styles.card__karma} score={score} />}
                     </div>
                 </div>
             </li>
@@ -173,6 +167,8 @@ const Card: React.FC<CardProps> = ({
                     permalink={permalink}
                     created={created}
                     bannerImg={thumbnail}
+                    score={score}
+                    id={id}
                     title={title}
                     thumbnail_height={thumbnail_height}
                     thumbnail_width={thumbnail_width}

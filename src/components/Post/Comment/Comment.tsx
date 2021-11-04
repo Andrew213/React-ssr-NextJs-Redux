@@ -5,6 +5,7 @@ import User_info from '../../CardList/Card/User_info/User_info';
 import share from '@img/icons/Desktop/share.svg';
 import report from '@img/icons/Desktop/report.svg';
 import comments from '@img/icons/comments.svg';
+import { CommentType } from '@/components/CardList/Card/Card';
 import List, { ListProps } from '@/lib/List/List';
 
 import styles from './styles.module.scss';
@@ -30,25 +31,34 @@ const commentControl: ListProps[] = [
     },
 ];
 
-type CommentProps = {
-    authorAvatar?: string;
-    author?: string;
-    published?: number;
-    replies?: any[] | undefined;
-    subreddit?: string;
-    body?: string;
-    onChange?: (value: string) => void;
-};
+interface CommentProps extends CommentType {
+    onChange?: (value: string, id: string) => void;
+}
 
-const Comment: React.FC<CommentProps> = ({ onChange, authorAvatar, author, published, subreddit, body, replies }) => {
+const Comment: React.FC<CommentProps> = ({
+    onChange,
+    authorImage,
+    score,
+    author,
+    id,
+    created,
+    subreddit,
+    body,
+    replies,
+}) => {
     return (
         <div className={styles.comment}>
             <div className={styles.comment__karmaWrapper}>
-                <Karma className={styles.comment__karma} />
+                <Karma className={styles.comment__karma} score={score} />
                 <div className={styles.comment__separator} />
             </div>
             <div className={styles.comment__main}>
-                <User_info className={styles.comment__userInfo} subreddit={subreddit} author={author} />
+                <User_info
+                    className={styles.comment__userInfo}
+                    subreddit={subreddit}
+                    author={author}
+                    authorAvatar={authorImage}
+                />
                 <Typography As="p" className={styles.comment__text}>
                     {body}
                 </Typography>
@@ -59,6 +69,7 @@ const Comment: React.FC<CommentProps> = ({ onChange, authorAvatar, author, publi
                                 id={el.id}
                                 onClick={onChange}
                                 key={el.id}
+                                smthToSend={{ commentId: id, author }}
                                 As={el.As}
                                 text={el.text}
                                 className={styles.listItem}
@@ -67,17 +78,19 @@ const Comment: React.FC<CommentProps> = ({ onChange, authorAvatar, author, publi
                         );
                     })}
                 </div>
-                {replies &&
-                    replies.map((cm, i) => {
-                        const comment = cm.data;
-                        const replies = comment?.replies?.data?.children;
-                        if (comment.body !== undefined) {
+                {replies.length > 0 &&
+                    replies.map((cm: CommentType) => {
+                        if (cm.body !== undefined) {
                             return (
                                 <Comment
-                                    replies={replies}
-                                    body={comment.body}
-                                    author={comment.author}
-                                    key={`${cm.data.id}${comment.author}`}
+                                    replies={cm.replies}
+                                    onChange={onChange}
+                                    body={cm.body}
+                                    score={cm.score}
+                                    id={cm.id}
+                                    authorImage={cm.authorImage}
+                                    author={cm.author}
+                                    key={`${cm.id}${cm.author}`}
                                 />
                             );
                         }

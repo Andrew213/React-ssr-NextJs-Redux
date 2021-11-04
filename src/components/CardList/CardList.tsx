@@ -51,6 +51,7 @@ const CardList: React.FC<CardListProps> = ({ postsArr }) => {
                                     created={pubTime}
                                     thumbnail_height={post.thumbnail_height}
                                     thumbnail_width={post.thumbnail_width}
+                                    score={post.score}
                                     key={post.id}
                                     id={`${post.id}`}
                                     title={post.title}

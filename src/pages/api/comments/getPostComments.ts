@@ -1,52 +1,81 @@
-import axios from 'axios';
-import fetch from 'node-fetch';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { CommentType } from '@/components/CardList/Card/Card';
-import { getSession } from 'next-auth/client';
-import snoowrap, { Comment, Listing } from 'snoowrap';
+import { CommentType, replyI } from '@/components/CardList/Card/Card';
+import { getSession, session } from 'next-auth/client';
+import { snoowrapR } from '@/pages';
+import { Listing, Comment } from 'snoowrap';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+    const { query, body } = req;
     try {
         const session = await getSession({ req });
-        const r = new snoowrap({
-            userAgent: 'userAgent',
-            clientId: 'KBEdM37DYRW4ukBWhT-wdQ',
-            clientSecret: 'sNGEj6X7Uxevyrbf8nuvVTfXVHx22g',
-            refreshToken: session.refreshToken as string,
-        });
-        // const asd = await Promise.all(
-        //     await r.getSubmission('4fuq26').comments.map(async (comm, i) => {
-        //         const replArr: CommentType[] = [];
 
-        //         await r
-        //             .getComment(comm.id)
-        //             .replies.fetchMore({ amount: 5 })
-        //             .forEach(replie => {
-        //                 const repObj: CommentType = {};
+        const r = snoowrapR(session.accessToken as string, session.refreshToken as string);
 
-        //                 repObj.body = replie.body;
-        //                 repObj.author = replie.author.name;
-        //                 repObj.id = replie.id;
-        //                 repObj.subreddit = replie.subreddit.name;
-        //                 repObj.created = replie.created;
+        const commArr: CommentType[] = [];
+        const images: replyI[] = [];
+        let i = 0;
 
-        //                 replArr.push(repObj);
-        //             });
+        const getReplieImg = async (replieArr: Listing<Comment>) => {
+            await Promise.all(
+                await replieArr.map(async rep => {
+                    if (rep.author.name !== '[deleted]') {
+                        const repImg = await rep.author.icon_img;
+                        const replObj: replyI = {
+                            authorImg: repImg,
+                            author: rep.author.name,
+                        };
+                        images.push(replObj);
+                        i++;
+                        if (rep.replies.length > 0) {
+                            void getReplieImg(rep.replies);
+                        }
+                    }
+                })
+            );
+            return images;
+        };
 
-        //         const returnObj: CommentType = await {
-        //             body: comm.body,
-        //             author: comm.author.name,
-        //             id: comm.id,
-        //             subreddit: comm.subreddit.name,
-        //             created: comm.created,
-        //             replies: replArr,
-        //         };
+        const transformReplies = async (replies: Listing<Comment>) => {
+            const replyArr: CommentType[] = [];
 
-        //         return returnObj;
-        //     })
-        // );
+            await Promise.all(
+                replies.map(async (rep, index) => {
+                    if (rep.author.name !== '[deleted]') {
+                        const repObj: CommentType = {
+                            author: rep.author.name,
+                            authorImage: await rep.author.icon_img,
+                            body: rep.body,
+                            score: rep.score,
+                            id: rep.id,
+                            created: rep.created,
+                            replies: await transformReplies(rep.replies),
+                        };
+                        replyArr.push(repObj);
+                    }
+                })
+            );
+            return replyArr;
+        };
 
-        // res.send(JSON.stringify(zaebalo));
+        await Promise.all(
+            await r.getSubmission(body.postId).comments.filter(async (cmt, i) => {
+                if (cmt.author.name !== '[deleted]') {
+                    const repObj: CommentType = {};
+                    repObj.author = cmt.author.name;
+                    repObj.body = cmt.body;
+                    repObj.score = cmt.score;
+                    repObj.id = cmt.id;
+                    repObj.authorImage = await cmt.author.icon_img;
+                    repObj.subreddit = cmt.subreddit.name;
+                    repObj.created = cmt.created;
+                    repObj.replies = await transformReplies(cmt.replies);
+                    // if (cmt.replies.length > 0) repObj.repliesImg = await getReplieImg(cmt.replies);
+                    commArr.push(repObj);
+                }
+            })
+        );
+
+        res.status(200).send(JSON.stringify(commArr));
     } catch (err) {
         console.log(`error ${err}`);
     }

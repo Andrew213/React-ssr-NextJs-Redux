@@ -17,6 +17,14 @@
         height: 107px;
     }
 
+    &__karma{
+        & > span {
+            color: $grey-99;
+            margin: 10px 0;
+            cursor: default;
+        }
+    }
+
     &__img{
         border-radius: 3px;
     }

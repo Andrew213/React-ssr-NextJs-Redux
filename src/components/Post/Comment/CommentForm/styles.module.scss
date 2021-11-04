@@ -11,8 +11,13 @@
         resize: none;
         color: $grey-99;
         font-size: 16px;
-        border-color: $grey-d9;
+        height: 90px;
+        border: 1px solid $grey-d9;
         padding: 16px;
+
+        &:focus{
+            border-color: black;
+        }
     }
     &__button{
         max-width: 220px;
@@ -34,3 +39,4 @@
         color: $orange;
     }
 }
+

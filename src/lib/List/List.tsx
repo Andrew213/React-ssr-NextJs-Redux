@@ -10,20 +10,21 @@ export type ListProps = {
     className?: string;
     As?: 'a' | 'li' | 'button' | 'div';
     href?: string;
+    smthToSend?: string | number | Record<string, any>;
     liIcon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-    onClick?: (id: string, text?: string) => void;
+    onClick?: (id: string, smthTosend?: string | number | Record<string, any>) => void;
     onMouseEnter?: (id?: string) => void;
 };
 
 const List: React.FC<ListProps> = props => {
-    const { id, text, className, As, href, liIcon, onClick, onMouseEnter } = props;
+    const { id, text, className, As, href, liIcon, onClick, onMouseEnter, smthToSend } = props;
 
     const handleMouseEnter = React.useCallback(() => onMouseEnter && onMouseEnter(id ? id : undefined), [
         id,
         onMouseEnter,
     ]);
 
-    const handleClick = React.useCallback(() => onClick && onClick(id, text), [id, onClick, text]);
+    const handleClick = React.useCallback(() => onClick && onClick(id, smthToSend), [id, onClick, smthToSend]);
 
     return (
         <As className={className} onClick={handleClick} key={id} href={href} onMouseEnter={handleMouseEnter}>
