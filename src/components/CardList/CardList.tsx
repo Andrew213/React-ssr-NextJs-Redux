@@ -7,6 +7,7 @@ import useWindowSize from '@/hooks/useWindowSize';
 import Card from './Card/Card';
 
 import styles from './styles.module.scss';
+import Counter from '../Counter/Counter';
 
 const ARR_HOUR = ['час', 'часа', 'часов'];
 

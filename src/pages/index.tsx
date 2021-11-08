@@ -46,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         const r = snoowrapR(session.accessToken as string, session.refreshToken as string);
         const postsArr: PostType[] = [];
         const top = await Promise.all(
-            (await r.getTop('webdev', { limit: 10 })).map(async post => {
+            (await r.getTop('', { limit: 10 })).map(async post => {
                 if ((await post.thumbnail) !== 'self') {
                     const postObj: PostType = {
                         title: post.title,

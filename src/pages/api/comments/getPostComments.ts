@@ -37,20 +37,21 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         const transformReplies = async (replies: Listing<Comment>) => {
             const replyArr: CommentType[] = [];
-
             await Promise.all(
                 replies.map(async (rep, index) => {
-                    if (rep.author.name !== '[deleted]') {
-                        const repObj: CommentType = {
-                            author: rep.author.name,
-                            authorImage: await rep.author.icon_img,
-                            body: rep.body,
-                            score: rep.score,
-                            id: rep.id,
-                            created: rep.created,
-                            replies: await transformReplies(rep.replies),
-                        };
-                        replyArr.push(repObj);
+                    if (body.repliesCount >= index) {
+                        if (rep.author.name !== '[deleted]') {
+                            const repObj: CommentType = {
+                                author: rep.author.name,
+                                authorImage: await rep.author.icon_img,
+                                body: rep.body,
+                                score: rep.score,
+                                id: rep.id,
+                                created: rep.created,
+                                replies: await transformReplies(rep.replies),
+                            };
+                            replyArr.push(repObj);
+                        }
                     }
                 })
             );
@@ -59,18 +60,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         await Promise.all(
             await r.getSubmission(body.postId).comments.filter(async (cmt, i) => {
-                if (cmt.author.name !== '[deleted]') {
-                    const repObj: CommentType = {};
-                    repObj.author = cmt.author.name;
-                    repObj.body = cmt.body;
-                    repObj.score = cmt.score;
-                    repObj.id = cmt.id;
-                    repObj.authorImage = await cmt.author.icon_img;
-                    repObj.subreddit = cmt.subreddit.name;
-                    repObj.created = cmt.created;
-                    repObj.replies = await transformReplies(cmt.replies);
-                    // if (cmt.replies.length > 0) repObj.repliesImg = await getReplieImg(cmt.replies);
-                    commArr.push(repObj);
+                if (body.commentsCount >= i) {
+                    if (cmt.author.name !== '[deleted]') {
+                        const repObj: CommentType = {};
+                        repObj.author = cmt.author.name;
+                        repObj.body = cmt.body;
+                        repObj.score = cmt.score;
+                        repObj.id = cmt.id;
+                        repObj.authorImage = await cmt.author.icon_img;
+                        repObj.subreddit = cmt.subreddit.name;
+                        repObj.created = cmt.created;
+                        repObj.replies = await transformReplies(cmt.replies);
+                        // if (cmt.replies.length > 0) repObj.repliesImg = await getReplieImg(cmt.replies);
+                        commArr.push(repObj);
+                    }
                 }
             })
         );

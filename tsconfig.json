@@ -36,6 +36,9 @@
       "@styles/*": [
         "src/styles/*"
       ],
+      "@store/*": [
+        "src/store/*"
+      ],
     },
     "esModuleInterop": true,
     "module": "esnext",

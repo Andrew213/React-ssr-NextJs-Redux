@@ -7,8 +7,10 @@ const withImages = require('next-images');
 const myAlias = {
   '@': path.resolve(appDirectory, './src'),
   '@hooks': path.resolve(appDirectory, './src/hooks'),
+  '@store': path.resolve(appDirectory, './src/store'),
   '@icons': path.resolve(appDirectory, './src/icons'),
-  '@img': path.resolve(appDirectory, './public/img')
+  '@img': path.resolve(appDirectory, './public/img'),
+
 }
 
 module.exports = {
@@ -32,7 +34,6 @@ module.exports = {
         }
       }]
     });
-    // console.log('###### ', webpack)
     return config
   },
 

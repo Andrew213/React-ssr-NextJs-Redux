@@ -14,8 +14,9 @@ import { dropDownList } from '@/utils/dropDownList';
 import Loader from 'react-loader-spinner';
 import Post from '@/components/Post/Post';
 import { Link, animateScroll as scroll } from 'react-scroll';
-import { useRouter } from 'next/router';
 import { PostType } from '@/pages';
+import { commentsFetchDataSuccess } from '@/store/actions';
+import { useDispatch } from 'react-redux';
 
 import styles from './styles.module.scss';
 
@@ -57,25 +58,21 @@ const Card: React.FC<CardProps> = ({
 }) => {
     const { width, height } = useWindowSize();
     const [isPostOpen, setIsPostOpen] = React.useState(false);
-    const [comments, setComments] = React.useState([]);
+    const dispatch = useDispatch();
 
     const handlePostClick = React.useCallback(() => {
-        const getComments = async () => {
-            const resp = await fetch(`/api/comments/getPostComments`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ commentsCount: 5, postId: id, repliesCount: 3 }),
-            });
-            const commentsArr = await resp.json();
-            setComments(commentsArr);
-        };
-
-        void getComments();
+        void fetch(`/api/comments/getPostComments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ commentsCount: 4, postId: id, repliesCount: 2 }),
+        })
+            .then(resp => resp.json())
+            .then(commentsArr => dispatch(commentsFetchDataSuccess(commentsArr)));
 
         setIsPostOpen(prev => !prev);
-    }, []);
+    }, [dispatch, id]);
 
     const handleOnPostClose = React.useCallback(() => {
         setIsPostOpen(false);
@@ -172,7 +169,6 @@ const Card: React.FC<CardProps> = ({
                     title={title}
                     thumbnail_height={thumbnail_height}
                     thumbnail_width={thumbnail_width}
-                    comments={comments}
                     subreddit={subreddit}
                     onClose={handleOnPostClose}
                 />

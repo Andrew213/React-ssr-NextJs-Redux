@@ -2,6 +2,7 @@ import React, { FocusEventHandler, useCallback, useEffect, useRef } from 'react'
 import Typography from '@/lib/Typography/Typography';
 import Image from 'next/image';
 import Karma from '../CardList/Card/Karma/Karma';
+import { useDispatch, useSelector } from 'react-redux';
 import bannerImg2 from '@img/banner.jpg';
 import CommentsForm from './Comment/CommentForm/CommentForm';
 import Comment from './Comment/Comment';
@@ -14,16 +15,13 @@ import Loader from 'react-loader-spinner';
 import Scroll, { Element } from 'react-scroll';
 import { useRouter } from 'next/router';
 import { PostType } from '@/pages';
-import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
-import { highlightMatches } from '@/utils/highlightMatches';
+import { commentsClear } from '@/store/actions';
 
 import styles from './styles.module.scss';
 
 interface PostProps extends PostType {
     onClose?: () => void;
     className?: string;
-    comments?: CommentType[];
-    updateComments?: () => void;
     triggerNode?: React.RefObject<HTMLButtonElement>;
 }
 
@@ -40,8 +38,6 @@ const Post: React.FC<PostProps> = ({
     authorAvatar,
     thumbnail_height,
     thumbnail_width,
-    comments,
-    updateComments,
     subreddit,
     score,
     id,
@@ -50,14 +46,10 @@ const Post: React.FC<PostProps> = ({
     bannerImg,
 }) => {
     const router = useRouter();
-
     const [initText, setInitText] = React.useState<initTextT>({ commentId: null, text: '' });
-    const [postComments, setPostComments] = React.useState([]);
+    // const [postComments, setPostComments] = React.useState([]);
     const commentFormRef = React.useRef(null);
-
-    React.useEffect(() => {
-        comments.length > 0 && setPostComments(comments);
-    }, [comments]);
+    const comments = useSelector(state => state as CommentType[]);
 
     const getAnswer = (dataComment: Record<string, string>) => {
         const { commentId, author } = dataComment;
@@ -82,46 +74,50 @@ const Post: React.FC<PostProps> = ({
         }
     }, []);
 
-    const sendComment = useCallback(
-        (e: React.MouseEvent) => {
-            e.preventDefault();
+    // const sendComment = useCallback(
+    //     (e: React.MouseEvent) => {
+    //         e.preventDefault();
 
-            const sendRep = async () => {
-                const res = await fetch('/api/comments/sendComment', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        commentData: initText,
-                        postId: id,
-                    }),
-                });
-                const foo = await res.json();
-                console.log(foo);
-                const resp = await fetch(`/api/comments/getPostComments`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ commentsCount: 5, postId: id, repliesCount: 3 }),
-                });
-                const commentsArr = await resp.json();
-                setPostComments(commentsArr);
-            };
-            void sendRep();
-            setInitText({ commentId: null, text: '' });
-        },
-        [id, initText]
-    );
+    //         const sendRep = async () => {
+    //             const res = await fetch('/api/comments/sendComment', {
+    //                 method: 'POST',
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //                 body: JSON.stringify({
+    //                     commentData: initText,
+    //                     postId: id,
+    //                 }),
+    //             });
+    //             const foo = await res.json();
+    //             console.log(foo);
+    //             const resp = await fetch(`/api/comments/getPostComments`, {
+    //                 method: 'POST',
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //                 body: JSON.stringify({ commentsCount: 5, postId: id, repliesCount: 3 }),
+    //             });
+    //             const commentsArr = await resp.json();
+    //             setPostComments(commentsArr);
+    //         };
+    //         void sendRep();
+    //         setInitText({ commentId: null, text: '' });
+    //     },
+    //     [id, initText]
+    // );
 
     const postRef = useRef<HTMLDivElement>(null);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const triggerBtn = triggerNode.current.children[0];
         const handleClick = (e: MouseEvent) => {
             if (e.target instanceof Node && e.target !== triggerBtn && !postRef.current?.contains(e.target)) {
                 onClose();
+
+                dispatch(commentsClear());
+
                 void router.push(`/`, undefined, { shallow: true });
             }
         };
@@ -181,12 +177,12 @@ const Post: React.FC<PostProps> = ({
                         <Element name="commentForm">
                             <CommentsForm
                                 commentFormRef={commentFormRef}
-                                onSendComment={sendComment}
+                                // onSendComment={sendComment}
                                 defaultValue={initText.text}
                                 onChange={handleOnChange}
                             />
                         </Element>
-                        {postComments.map((comment, i) => {
+                        {comments.map((comment, i) => {
                             return (
                                 <Comment
                                     key={comment.id}

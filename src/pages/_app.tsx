@@ -1,10 +1,8 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import App, { AppContext, AppProps } from 'next/app';
-import { CookiesProvider } from 'react-cookie';
-import { tokenContext } from '@/hooks/userContext';
-import { useCookies } from 'react-cookie';
+import { Provider } from 'react-redux';
+import { useStore } from '@/store/store';
 import { Session } from 'next-auth';
-import { commentContext } from '@/hooks/commentContext';
 import { getSession, GetSessionOptions, Provider as SessionProvider } from 'next-auth/client';
 
 import '@styles/global.scss';
@@ -14,19 +12,13 @@ interface AppType extends AppProps {
 }
 
 const MyApp = ({ Component, pageProps, session }: AppType): ReactElement => {
-    const [cookies] = useCookies();
-    const [commentValue, setCommentValue] = useState('');
-
-    const CommentProvider = commentContext.Provider;
-
+    const store = useStore(pageProps.initialReduxState);
     return (
-        <CookiesProvider>
+        <Provider store={store}>
             <SessionProvider session={session} options={{ baseUrl: process.env.NEXTAUTH_URL }}>
-                <CommentProvider value={{ value: commentValue, onChange: setCommentValue }}>
-                    <Component {...pageProps} />
-                </CommentProvider>
+                <Component {...pageProps} />
             </SessionProvider>
-        </CookiesProvider>
+        </Provider>
     );
 };
 
