@@ -1,13 +1,12 @@
 import React from 'react';
 import Loader from 'react-loader-spinner';
 import { declOfNum, formatUnixDate } from '@/utils';
+import PostType from '@/interfaces/PostType';
 import { useSession } from 'next-auth/client';
-import { PostType } from '@/pages';
 import useWindowSize from '@/hooks/useWindowSize';
 import Card from './Card/Card';
 
 import styles from './styles.module.scss';
-import Counter from '../Counter/Counter';
 
 const ARR_HOUR = ['час', 'часа', 'часов'];
 
@@ -17,7 +16,10 @@ type CardListProps = {
 
 const CardList: React.FC<CardListProps> = ({ postsArr }) => {
     const [session, load] = useSession();
-
+    // console.log(
+    //     `post arr `,
+    //     postsArr.map(post => post.title)
+    // );
     const { width, height } = useWindowSize();
 
     if (load) {
@@ -34,33 +36,29 @@ const CardList: React.FC<CardListProps> = ({ postsArr }) => {
             <>
                 <div className={styles.cardList}>
                     <ul>
-                        {postsArr.map((post: PostType) => {
+                        {postsArr.map((post: PostType, i) => {
                             const created = formatUnixDate(post.created);
                             const pubTime = `${width > 460 ? 'опубликованно' : ''} ${created} ${declOfNum(
                                 created,
                                 ARR_HOUR
                             )} назад`;
-                            const thumb =
-                                post.thumbnail !== 'self' &&
-                                post.thumbnail !== 'nsfw' &&
-                                post.thumbnail !== 'default' &&
-                                post.thumbnail;
+
                             return (
                                 <Card
                                     author={post.author}
-                                    authorAvatar={post.authorAvatar}
                                     created={pubTime}
-                                    thumbnail_height={post.thumbnail_height}
-                                    thumbnail_width={post.thumbnail_width}
+                                    // thumbnail_height={post.thumbnail_height}
+                                    // thumbnail_width={post.thumbnail_width}
                                     score={post.score}
                                     key={post.id}
                                     id={`${post.id}`}
                                     title={post.title}
-                                    thumbnail={thumb}
-                                    bannerImg={post.bannerImg}
+                                    contentImg_Height={post.contentImg_Height}
+                                    contentImg_Width={post.contentImg_Width}
+                                    thumbnail={post.thumbnail}
+                                    content={post.content}
                                     permalink={post.permalink}
                                     description={post.description}
-                                    headerImg={post.headerImg}
                                 />
                             );
                         })}

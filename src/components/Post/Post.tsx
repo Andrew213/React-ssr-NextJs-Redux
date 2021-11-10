@@ -10,11 +10,12 @@ import User_info from '../CardList/Card/User_info/User_info';
 import Portal from '@/lib/Portal/Portal';
 import List from '@/lib/List/List';
 import { dropDownList } from '@/utils/dropDownList';
-import { CommentType } from '../CardList/Card/Card';
 import Loader from 'react-loader-spinner';
 import Scroll, { Element } from 'react-scroll';
 import { useRouter } from 'next/router';
-import { PostType } from '@/pages';
+import PostType from '@/interfaces/PostType';
+import CommentType from '@/interfaces/Comment';
+import ReactPlayer from 'react-player';
 import { commentsClear } from '@/store/actions';
 
 import styles from './styles.module.scss';
@@ -34,21 +35,24 @@ const Post: React.FC<PostProps> = ({
     triggerNode,
     title,
     author,
+    description,
     created,
-    authorAvatar,
-    thumbnail_height,
-    thumbnail_width,
+    contentImg_Height,
+    contentImg_Width,
     subreddit,
     score,
-    id,
     onClose,
     className,
-    bannerImg,
+    content,
 }) => {
     const router = useRouter();
+
     const [initText, setInitText] = React.useState<initTextT>({ commentId: null, text: '' });
+
     // const [postComments, setPostComments] = React.useState([]);
+
     const commentFormRef = React.useRef(null);
+
     const comments = useSelector(state => state as CommentType[]);
 
     const getAnswer = (dataComment: Record<string, string>) => {
@@ -128,6 +132,31 @@ const Post: React.FC<PostProps> = ({
         };
     }, []);
 
+    const renderSwitch = React.useCallback(type => {
+        switch (type) {
+            case 'image':
+                return (
+                    <Image
+                        src={content.data}
+                        width={500}
+                        height={600}
+                        quality={80}
+                        className={styles.post__bannerImg}
+                    />
+                );
+                break;
+            case 'video':
+                console.log(content.data);
+                return (
+                    <div className={styles.post__imgWrapper}>
+                        <ReactPlayer controls url={content.data} playing volume={0.2} />
+                    </div>
+                );
+            default:
+                break;
+        }
+    }, []);
+
     return (
         <Portal className={className}>
             <div style={{ color: 'red' }} className={styles.post} ref={postRef}>
@@ -138,14 +167,17 @@ const Post: React.FC<PostProps> = ({
                         subreddit={subreddit}
                         author={author}
                         created={created}
-                        authorAvatar={authorAvatar}
                     />
                 </div>
 
                 <Typography As="p" className={styles.post__text} size={28} weight={400}>
                     {title}
                 </Typography>
-                <div className={styles.post__imgWrapper}>
+                {content && <div className={styles.post__imgWrapper}>{renderSwitch(content.type)}</div>}
+                {/* <div className={styles.post__imgWrapper}>
+                        <ReactPlayer playing controls url={content} volume={1} />
+                    </div> */}
+                {/* <div className={styles.post__imgWrapper}>
                     <Image
                         src={bannerImg ? bannerImg : bannerImg2}
                         width={thumbnail_width * 3}
@@ -153,7 +185,7 @@ const Post: React.FC<PostProps> = ({
                         quality={100}
                         className={styles.post__bannerImg}
                     />
-                </div>
+                </div> */}
 
                 <div className={styles.post__control}>
                     {dropDownList.map((el, i) => {
@@ -172,7 +204,7 @@ const Post: React.FC<PostProps> = ({
                         );
                     })}
                 </div>
-                {comments.length > 0 ? (
+                {/* {comments.length > 0 ? (
                     <>
                         <Element name="commentForm">
                             <CommentsForm
@@ -192,7 +224,6 @@ const Post: React.FC<PostProps> = ({
                                     created={comment.created}
                                     body={comment.body}
                                     id={comment.id}
-                                    authorImage={comment.authorImage}
                                     replies={comment.replies}
                                 />
                             );
@@ -202,7 +233,7 @@ const Post: React.FC<PostProps> = ({
                     <div className={styles.post__load}>
                         <Loader type="Circles" color="#cc6633" height={50} width={50} timeout={30000} />
                     </div>
-                )}
+                )} */}
             </div>
         </Portal>
     );

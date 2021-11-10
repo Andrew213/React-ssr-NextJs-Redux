@@ -1,46 +1,4 @@
-import { session } from 'next-auth/client';
 import NextAuth from 'next-auth';
-import Providers from 'next-auth/providers';
-
-async function refreshAccessToken(token) {
-    try {
-        const url =
-            'https://www.reddit.com/api/v1/access_token?' +
-            new URLSearchParams({
-                client_id: process.env.CLIENT_ID,
-                client_secret: process.env.CLIENT_SECRET,
-                grant_type: 'refresh_token',
-                refresh_token: token.refreshToken,
-            });
-
-        const response = await fetch(url, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            method: 'POST',
-        });
-
-        const refreshedTokens = await response.json();
-
-        if (!response.ok) {
-            throw refreshedTokens;
-        }
-
-        return {
-            ...token,
-            accessToken: refreshedTokens.access_token,
-            accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
-            refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
-        };
-    } catch (error) {
-        console.log(error);
-
-        return {
-            ...token,
-            error: 'RefreshAccessTokenError',
-        };
-    }
-}
 
 export default NextAuth({
     providers: [

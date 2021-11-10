@@ -1,23 +1,3 @@
-// import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-// import counterReducer from '../components/Counter/CounterSlice';
-// // export function makeStore() {
-// //     return configureStore({
-// //         reducer: { counter: counterReducer },
-// //     });
-// // }
-
-// const store = configureStore({
-//     reducer: { counter: counterReducer },
-// });
-
-// export type AppState = ReturnType<typeof store.getState>;
-
-// export type AppDispatch = typeof store.dispatch;
-
-// export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, AppState, unknown, Action<string>>;
-
-// export default store;
-
 import { useMemo } from 'react';
 import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';

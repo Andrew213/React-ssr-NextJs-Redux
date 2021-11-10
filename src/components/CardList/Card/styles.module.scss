@@ -39,12 +39,15 @@
         display: flex;
         padding-top: 10px;
         flex-direction: column;
+        // width: 100%;
+        overflow: hidden;
+        align-content: flex-start;
+        padding-right: 150px;
     }
 
     &__title{
         transition: color 0.3s;
         padding-bottom: 8px;
-        max-width: 600px;
         overflow: hidden;
         font-size: 20px;
         cursor: pointer;

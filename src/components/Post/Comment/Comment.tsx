@@ -5,7 +5,7 @@ import User_info from '../../CardList/Card/User_info/User_info';
 import share from '@img/icons/Desktop/share.svg';
 import report from '@img/icons/Desktop/report.svg';
 import comments from '@img/icons/comments.svg';
-import { CommentType } from '@/components/CardList/Card/Card';
+import CommentType from '@/interfaces/Comment';
 import List, { ListProps } from '@/lib/List/List';
 
 import styles from './styles.module.scss';
@@ -35,17 +35,7 @@ interface CommentProps extends CommentType {
     onChange?: (value: string, id: string) => void;
 }
 
-const Comment: React.FC<CommentProps> = ({
-    onChange,
-    authorImage,
-    score,
-    author,
-    id,
-    created,
-    subreddit,
-    body,
-    replies,
-}) => {
+const Comment: React.FC<CommentProps> = ({ onChange, score, author, id, created, subreddit, body, replies }) => {
     return (
         <div className={styles.comment}>
             <div className={styles.comment__karmaWrapper}>
@@ -53,12 +43,7 @@ const Comment: React.FC<CommentProps> = ({
                 <div className={styles.comment__separator} />
             </div>
             <div className={styles.comment__main}>
-                <User_info
-                    className={styles.comment__userInfo}
-                    subreddit={subreddit}
-                    author={author}
-                    authorAvatar={authorImage}
-                />
+                <User_info className={styles.comment__userInfo} subreddit={subreddit} author={author} />
                 <Typography As="p" className={styles.comment__text}>
                     {body}
                 </Typography>
@@ -88,7 +73,6 @@ const Comment: React.FC<CommentProps> = ({
                                     body={cm.body}
                                     score={cm.score}
                                     id={cm.id}
-                                    authorImage={cm.authorImage}
                                     author={cm.author}
                                     key={`${cm.id}${cm.author}`}
                                 />

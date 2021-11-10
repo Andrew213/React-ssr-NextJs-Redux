@@ -13,8 +13,8 @@ import User_info from './User_info/User_info';
 import { dropDownList } from '@/utils/dropDownList';
 import Loader from 'react-loader-spinner';
 import Post from '@/components/Post/Post';
+import PostType from '@/interfaces/PostType';
 import { Link, animateScroll as scroll } from 'react-scroll';
-import { PostType } from '@/pages';
 import { commentsFetchDataSuccess } from '@/store/actions';
 import { useDispatch } from 'react-redux';
 
@@ -25,54 +25,38 @@ interface CardProps extends PostType {
     isPostOpen?: boolean;
 }
 
-export interface replyI {
-    author: string;
-    authorImg: string;
-    replies?: replyI[];
-}
-
-export interface CommentType {
-    author?: string;
-    body?: string;
-    id?: string;
-    score?: number;
-    subreddit?: string;
-    repliesImg?: replyI[];
-    created?: number;
-    authorImage?: string;
-    replies?: any;
-}
-
 const Card: React.FC<CardProps> = ({
     subreddit,
     author,
     thumbnail,
     title,
-    authorAvatar,
     created,
     score,
-    thumbnail_height,
-    thumbnail_width,
+    contentImg_Height,
+    contentImg_Width,
     permalink,
     id,
+    content,
+    description,
 }) => {
     const { width, height } = useWindowSize();
     const [isPostOpen, setIsPostOpen] = React.useState(false);
     const dispatch = useDispatch();
-
     const handlePostClick = React.useCallback(() => {
-        void fetch(`/api/comments/getPostComments`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ commentsCount: 4, postId: id, repliesCount: 2 }),
-        })
-            .then(resp => resp.json())
-            .then(commentsArr => dispatch(commentsFetchDataSuccess(commentsArr)));
+        scroll.scrollTo(100);
+
+        // void fetch(`/api/comments/getPostComments`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({ commentsCount: 4, postId: id, repliesCount: 2 }),
+        // })
+        //     .then(resp => resp.json())
+        //     .then(commentsArr => dispatch(commentsFetchDataSuccess(commentsArr)));
 
         setIsPostOpen(prev => !prev);
-    }, [dispatch, id]);
+    }, []);
 
     const handleOnPostClose = React.useCallback(() => {
         setIsPostOpen(false);
@@ -82,36 +66,25 @@ const Card: React.FC<CardProps> = ({
 
     const titleRef = React.useRef(null);
 
-    const scrollToTop = () => {
-        scroll.scrollTo(100);
-    };
-
     return (
         <>
             <li className={styles.card}>
                 {!WIDTH_990 && <CardControlMobile KarmaControl={Karma} />}
-
-                <div className={styles.card__imgWrapper}>
-                    {!thumbnail ? (
-                        <div className={styles.card__img_load}>
-                            <Loader type="Circles" color="#cc6633" height={50} width={50} timeout={30000} />
-                        </div>
-                    ) : (
+                {thumbnail && (
+                    <div className={styles.card__imgWrapper}>
                         <Image
                             src={thumbnail ? thumbnail : pic}
                             layout="fill"
                             quality={50}
                             className={styles.card__img}
                         />
-                    )}
-                </div>
+                    </div>
+                )}
                 <div className={styles.card__info}>
-                    <Link to="" onClick={scrollToTop}>
-                        <button onClick={handlePostClick} ref={titleRef}>
-                            <h2 className={styles.card__title}>{title ? title : 'Here is any Title'}</h2>
-                        </button>
-                    </Link>
-                    <User_info created={`${created}`} authorAvatar={authorAvatar} author={author} />
+                    <button onClick={handlePostClick} className={styles.card__titleBtn} ref={titleRef}>
+                        <h2 className={styles.card__title}>{title}</h2>
+                    </button>
+                    <User_info created={`${created}`} author={author} />
                     <div className={styles.card__viewed}>
                         <Icon component={viewed} />
                         <p className={styles.card__viewedText}>1 час назад</p>
@@ -160,15 +133,15 @@ const Card: React.FC<CardProps> = ({
                 <Post
                     triggerNode={titleRef}
                     author={author}
-                    authorAvatar={authorAvatar}
                     permalink={permalink}
                     created={created}
-                    bannerImg={thumbnail}
+                    description={description}
+                    contentImg_Height={contentImg_Height}
+                    contentImg_Width={contentImg_Width}
+                    content={content && content}
                     score={score}
                     id={id}
                     title={title}
-                    thumbnail_height={thumbnail_height}
-                    thumbnail_width={thumbnail_width}
                     subreddit={subreddit}
                     onClose={handleOnPostClose}
                 />

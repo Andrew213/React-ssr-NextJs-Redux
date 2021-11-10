@@ -42,6 +42,6 @@ module.exports = {
     prependData: `@import "~@styles/variables.scss";`,
   },
   images: {
-    domains: ['b.thumbs.redditmedia.com', 'a.thumbs.redditmedia.com', 'e.thumbs.redditmedia.com', 'styles.redditmedia.com', 'www.redditstatic.com'],
+    domains: ['b.thumbs.redditmedia.com', 'a.thumbs.redditmedia.com', 'e.thumbs.redditmedia.com', 'styles.redditmedia.com', 'www.redditstatic.com', 'i.redd.it', "preview.redd.it"],
   },
 }
