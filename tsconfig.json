@@ -38,14 +38,15 @@
       ],
       "@store/*": [
         "src/store/*"
-      ],
+      ]
     },
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "incremental": true
   },
   "exclude": [
     "node_modules"

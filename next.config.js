@@ -20,6 +20,7 @@ module.exports = {
     CLIENT_NAME: process.env.CLIENT_NAME,
     CLIENT_PASSWORD: process.env.CLIENT_PASSWORD,
     CLIENT_SECRET: process.env.CLIENT_SECRET,
+    NEXT_SHARP_PATH: process.env.NEXT_SHARP_PATH,
   },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
 
@@ -43,5 +44,6 @@ module.exports = {
   },
   images: {
     domains: ['b.thumbs.redditmedia.com', 'a.thumbs.redditmedia.com', 'e.thumbs.redditmedia.com', 'styles.redditmedia.com', 'www.redditstatic.com', 'i.redd.it', "preview.redd.it"],
+    minimumCacheTTL: 31536000,
   },
 }

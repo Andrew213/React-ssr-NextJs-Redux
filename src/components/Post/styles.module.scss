@@ -11,7 +11,21 @@
     padding: 30px 40px;
 
     &__title{
-        margin-bottom: 8px;
+        display: block;
+        line-height: 34px;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    // &__imgWrapper{
+    //     position: relative;
+    //     width: 100px;
+    //     min-height: 100px;
+    //     // max-height: 200px;
+    // }
+
+    &__bannerImg{
+        max-height: 500px;
     }
 
     &__user{
@@ -24,6 +38,12 @@
             margin: 10px 0;
             cursor: default;
         }
+    }
+
+    &__description{
+        line-height: 2;
+        font-size: 16px;
+        // font-size: 20px;
     }
 
     &__gallery2_img{
@@ -43,27 +63,16 @@
         margin-left: 20px;
     }
 
-    &__text{
-        line-height: 24px;
-        line-height: 34px;
-        text-align: center;
-        &_first{
-            color: red;
-        }
-    }
-
     &__imgWrapper{
         display: flex;
         justify-content: center;
         margin: 0;
-        margin-bottom: 30px;
-        margin-top: 30px;
     }
 
     &__control{
         display: flex;
         justify-content: center;
-        margin-bottom: 30px;
+        margin: 30px 0;
     }
 
     &__load{

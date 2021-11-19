@@ -3,7 +3,6 @@ import Typography from '@/lib/Typography/Typography';
 import Image from 'next/image';
 import Karma from '../CardList/Card/Karma/Karma';
 import { useDispatch, useSelector } from 'react-redux';
-import bannerImg2 from '@img/banner.jpg';
 import CommentsForm from './Comment/CommentForm/CommentForm';
 import Comment from './Comment/Comment';
 import User_info from '../CardList/Card/User_info/User_info';
@@ -47,13 +46,17 @@ const Post: React.FC<PostProps> = ({
 }) => {
     const router = useRouter();
 
+    const { type: descType, content: descContent } = description;
+
     const [initText, setInitText] = React.useState<initTextT>({ commentId: null, text: '' });
+
+    const postRef = useRef<HTMLDivElement>(null);
 
     // const [postComments, setPostComments] = React.useState([]);
 
     const commentFormRef = React.useRef(null);
 
-    const comments = useSelector(state => state as CommentType[]);
+    // const comments = useSelector(state => state as CommentType[]);
 
     const getAnswer = (dataComment: Record<string, string>) => {
         const { commentId, author } = dataComment;
@@ -111,42 +114,32 @@ const Post: React.FC<PostProps> = ({
     //     [id, initText]
     // );
 
-    const postRef = useRef<HTMLDivElement>(null);
-    const dispatch = useDispatch();
-
     useEffect(() => {
         const triggerBtn = triggerNode.current.children[0];
+
         const handleClick = (e: MouseEvent) => {
             if (e.target instanceof Node && e.target !== triggerBtn && !postRef.current?.contains(e.target)) {
                 onClose();
 
-                dispatch(commentsClear());
+                // dispatch(commentsClear());
 
                 void router.push(`/`, undefined, { shallow: true });
             }
         };
 
         document.addEventListener('click', handleClick);
+
         return () => {
             document.removeEventListener('click', handleClick);
         };
     }, []);
 
-    const renderSwitch = React.useCallback(type => {
+    const renderContentSwitch = (type: string) => {
         switch (type) {
             case 'image':
-                return (
-                    <Image
-                        src={content.data}
-                        width={500}
-                        height={600}
-                        quality={80}
-                        className={styles.post__bannerImg}
-                    />
-                );
+                return <img src={content.data} className={styles.post__bannerImg} />;
                 break;
             case 'video':
-                console.log(content.data);
                 return (
                     <div className={styles.post__imgWrapper}>
                         <ReactPlayer controls url={content.data} playing volume={0.2} />
@@ -155,7 +148,33 @@ const Post: React.FC<PostProps> = ({
             default:
                 break;
         }
-    }, []);
+    };
+
+    const renderDescriptionSwitch = (type: string) => {
+        switch (type) {
+            case 'html':
+                return (
+                    <div
+                        className={styles.post__description}
+                        dangerouslySetInnerHTML={{ __html: description.content }}
+                    />
+                );
+                break;
+            case 'URL':
+                return (
+                    <a
+                        className={styles.post__link}
+                        href={description.content}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        {description.content}
+                    </a>
+                );
+            default:
+                break;
+        }
+    };
 
     return (
         <Portal className={className}>
@@ -170,22 +189,13 @@ const Post: React.FC<PostProps> = ({
                     />
                 </div>
 
-                <Typography As="p" className={styles.post__text} size={28} weight={400}>
+                <Typography As="p" className={styles.post__title} size={28} weight={400}>
                     {title}
                 </Typography>
-                {content && <div className={styles.post__imgWrapper}>{renderSwitch(content.type)}</div>}
-                {/* <div className={styles.post__imgWrapper}>
-                        <ReactPlayer playing controls url={content} volume={1} />
-                    </div> */}
-                {/* <div className={styles.post__imgWrapper}>
-                    <Image
-                        src={bannerImg ? bannerImg : bannerImg2}
-                        width={thumbnail_width * 3}
-                        height={thumbnail_height * 3}
-                        quality={100}
-                        className={styles.post__bannerImg}
-                    />
-                </div> */}
+
+                {description && renderDescriptionSwitch(descType)}
+
+                {content && <div className={styles.post__imgWrapper}>{renderContentSwitch(content.type)}</div>}
 
                 <div className={styles.post__control}>
                     {dropDownList.map((el, i) => {

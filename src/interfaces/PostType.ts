@@ -10,6 +10,11 @@ export type ContentT = {
     data: string;
 };
 
+export type DescriptionT = {
+    type?: 'html' | 'URL';
+    content?: string;
+};
+
 export default interface PostType {
     author?: authorT;
     created?: string | number;
@@ -20,7 +25,7 @@ export default interface PostType {
     contentImg_Height?: number;
     score?: number;
     headerImg?: string;
-    description?: string;
+    description?: DescriptionT;
     thumbnail?: string;
     commentsCount?: number;
     title?: string;

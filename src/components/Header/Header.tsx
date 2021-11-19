@@ -7,7 +7,6 @@ import Mail from '@img/icons/Desktop/mail.svg';
 import Anonim from '@img/icons/Desktop/anonim.svg';
 import { useSession, signOut, session, signin } from 'next-auth/client';
 import Typography from '@/lib/Typography/Typography';
-import { userContext } from '@/hooks/userContext';
 import Icon from '@/lib/Icon/Icon';
 
 import styles from './styles.module.scss';

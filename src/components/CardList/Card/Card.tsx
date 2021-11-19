@@ -40,8 +40,15 @@ const Card: React.FC<CardProps> = ({
     description,
 }) => {
     const { width, height } = useWindowSize();
+
     const [isPostOpen, setIsPostOpen] = React.useState(false);
+
+    const WIDTH_990 = width > 990;
+
     const dispatch = useDispatch();
+
+    const titleRef = React.useRef(null);
+
     const handlePostClick = React.useCallback(() => {
         scroll.scrollTo(100);
 
@@ -62,22 +69,13 @@ const Card: React.FC<CardProps> = ({
         setIsPostOpen(false);
     }, []);
 
-    const WIDTH_990 = width > 990;
-
-    const titleRef = React.useRef(null);
-
     return (
         <>
             <li className={styles.card}>
                 {!WIDTH_990 && <CardControlMobile KarmaControl={Karma} />}
                 {thumbnail && (
                     <div className={styles.card__imgWrapper}>
-                        <Image
-                            src={thumbnail ? thumbnail : pic}
-                            layout="fill"
-                            quality={50}
-                            className={styles.card__img}
-                        />
+                        <Image src={thumbnail} layout="fill" quality={50} className={styles.card__img} />
                     </div>
                 )}
                 <div className={styles.card__info}>
@@ -138,7 +136,7 @@ const Card: React.FC<CardProps> = ({
                     description={description}
                     contentImg_Height={contentImg_Height}
                     contentImg_Width={contentImg_Width}
-                    content={content && content}
+                    content={content}
                     score={score}
                     id={id}
                     title={title}
