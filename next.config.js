@@ -21,6 +21,7 @@ module.exports = {
     CLIENT_PASSWORD: process.env.CLIENT_PASSWORD,
     CLIENT_SECRET: process.env.CLIENT_SECRET,
     NEXT_SHARP_PATH: process.env.NEXT_SHARP_PATH,
+    APP_ONLY_ID: process.env.APP_ONLY_ID
   },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
 

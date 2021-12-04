@@ -1,6 +1,6 @@
-import { PostsActionType } from './../action-types/index';
-import { PostsTimes } from './../interfaces/index';
-import { PostsSortMode } from './../PostState';
+import { PostsActionType } from '../action-types/index';
+import { PostsTimes } from '../interfaces/index';
+import { PostsSortMode } from '../PostState';
 import { Submission, Subreddit } from 'snoowrap';
 
 export const requestPosts = (subreddit: string, sortMode: PostsSortMode, time: PostsTimes) => {

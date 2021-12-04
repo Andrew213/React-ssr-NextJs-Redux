@@ -1,5 +1,5 @@
-import { postsRepositories } from './posts/actions';
+import { fetchPosts } from './posts/actions';
 import { commentsRepositories } from './comments/actions';
 
-export const PostsRepositories = postsRepositories;
+export const FetchPosts = fetchPosts;
 export const CommentsRepositories = commentsRepositories;

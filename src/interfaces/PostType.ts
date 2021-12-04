@@ -6,8 +6,8 @@ export type authorT = {
 };
 
 export type ContentT = {
-    type: string;
-    data: string;
+    type: 'gif' | 'video' | 'text' | 'image';
+    url: string;
 };
 
 export type DescriptionT = {
@@ -16,18 +16,35 @@ export type DescriptionT = {
 };
 
 export default interface PostType {
-    author?: authorT;
-    created?: string | number;
-    id?: string;
-    permalink?: string;
+    authorName?: string;
+    commentsCount?: number;
     content?: ContentT;
     contentImg_Width?: number;
     contentImg_Height?: number;
-    score?: number;
-    headerImg?: string;
+    created?: string | number;
+    domain?: string;
+    distinguished?: 'moderator' | 'admin';
     description?: DescriptionT;
-    thumbnail?: string;
-    commentsCount?: number;
+    headerImg?: string;
+    id?: string;
+    imgPreview_width?: number;
+    imgPreview_height?: number;
+    isGif?: boolean;
+    isImage?: boolean;
+    isLike?: boolean;
+    isSelf?: boolean;
+    isVideo?: boolean;
+    linkFlaitText?: string;
+    over18?: boolean;
+    permalink?: string;
+    post_himt?: string;
+    saved?: boolean;
+    score?: number;
+    selfTextHtml?: string;
+    spoiler?: boolean;
+    sticked?: boolean;
+    subredditName?: string;
     title?: string;
-    subreddit?: string;
+    thumbnail?: string;
+    url?: string;
 }

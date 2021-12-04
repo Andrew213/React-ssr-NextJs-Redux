@@ -22,7 +22,9 @@ export type PostsInSubState = {
 
 export type PostsState = {
     posts: Submission[];
-    // byId: IdPostDict;
+    byId: IdPostDict;
+    isLoading: boolean;
+    error: boolean;
     // bySubreddit: {
     //     [key: string]: PostsInSubState;
     // };
