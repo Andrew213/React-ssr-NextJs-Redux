@@ -1,60 +1,86 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import CommentType, { replyI } from '@/interfaces/Comment';
-import { getSession, session } from 'next-auth/client';
-import snoowConf from '@/utils/snow';
-import Snoowrap, { Listing, Comment, Submission } from 'snoowrap';
-
-type PostFetchedT = {
-    data?: Submission;
-    icon_img?: string;
-    comments?: Comment[];
-};
+import { NextApiRequest, NextApiResponse } from "next";
+import { getSession } from "next-auth/client";
+import snoowConf from "@/utils/snow";
+import Snoowrap, { Listing, Submission } from "snoowrap";
+import { PostDisruction } from "@/utils/postTransform";
+import { PostFetchedT } from "@/interfaces/PostType";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-    const session = await getSession({ req });
+  const session = await getSession({ req });
 
-    let r: Snoowrap | null = null;
+  const { body } = req;
 
-    if (session) {
-        r = snoowConf(session.accessToken as string, session.refreshToken as string);
+  const { subreddit, sortMode, time } = body;
 
-        const posts = await r.getHot('webdev');
+  let r: Snoowrap | null = null;
 
-        res.status(200).send(JSON.stringify(posts));
-    } else {
-        const posts: PostFetchedT[] = [];
+  if (session) {
+    r = snoowConf(
+      session.accessToken as string,
+      session.refreshToken as string
+    );
 
-        const basicAuth = Buffer.from(`${process.env.APP_ONLY_ID}:`).toString('base64');
+    const posts = await r.getHot("webdev");
 
-        const resp = await fetch('https://www.reddit.com/api/v1/access_token', {
-            method: 'POST',
-            headers: {
-                Authorization: `Basic ${basicAuth}`,
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `grant_type=https://oauth.reddit.com/grants/installed_client&device_id=DO_NOT_TRACK_THIS_DEVICE`,
-        });
+    res.status(200).send(JSON.stringify(posts));
+  } else {
+    const basicAuth = Buffer.from(`${process.env.APP_ONLY_ID}:`).toString(
+      "base64"
+    );
 
-        const json = await resp.json();
+    const resp = await fetch("https://www.reddit.com/api/v1/access_token", {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${basicAuth}`,
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: `grant_type=https://oauth.reddit.com/grants/installed_client&device_id=DO_NOT_TRACK_THIS_DEVICE`
+    });
 
-        r = snoowConf(json.access_token as string);
+    const json = await resp.json();
 
-        const postsFetched: Submission[] = await r.getHot('');
+    r = snoowConf(json.access_token as string);
 
-        await Promise.all(
-            postsFetched.map(async (post: Submission) => {
-                const newPost: PostFetchedT = {
-                    data: post,
-                    icon_img: await r.getUser(post.author.name).icon_img,
-                };
+    // #########################################################
+    const postsWithIcon_img: PostFetchedT[] = [];
+    let posts: Listing<Submission>;
+    const sub = subreddit ? subreddit : "";
 
-                posts.push(newPost);
-            })
-        );
-
-        res.status(200).send(posts);
+    switch (sortMode) {
+      case "hot":
+        posts = await r.getHot(sub);
+        break;
+      case "top":
+        posts = await r.getTop(sub, { time });
+        break;
+      case "new":
+        posts = await r.getNew(sub);
+        break;
+      case "controversial":
+        posts = await r.getControversial(sub, { time });
+        break;
+      case "rising":
+        posts = await r.getRising(sub);
+        break;
+      default:
+        posts = await r.getHot(sub);
     }
-    res.end();
+
+    await Promise.all(
+      posts.map(async (post: Submission) => {
+        const newPost: PostFetchedT = {
+          data: PostDisruction(post),
+          icon_img: await r.getUser(post.author.name).icon_img,
+          originalPost: post
+        };
+
+        postsWithIcon_img.push(newPost);
+      })
+    );
+
+    res.status(200).send(postsWithIcon_img);
+  }
+  res.end();
 };
 
 // void Snoowrap.fromApplicationOnlyAuth({

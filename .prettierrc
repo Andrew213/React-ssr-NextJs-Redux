@@ -1,26 +1,4 @@
 {
-    "useTabs": false,
-    "printWidth": 120,
-    "tabWidth": 4,
-    "singleQuote": true,
-    "trailingComma": "es5",
-    "jsxBracketSameLine": false,
-    "semi": true,
-    "parser": "typescript",
-    "arrowParens": "avoid",
-    "proseWrap": "always",
-    "htmlWhitespaceSensitivity": "css",
-    "insertPragma": false,
-    "quoteProps": "preserve",
-    "vueIndentScriptAndStyle": false,
-    "requirePragma": false,
-    "endOfLine": "auto",
-    "overrides": [
-        {
-            "files": "*.scss",
-            "options": {
-                "parser": "scss"
-            }
-        }
-    ]
+  "tabWidth": 2,
+  "useTabs": false
 }

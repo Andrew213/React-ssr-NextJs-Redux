@@ -1,34 +1,14 @@
-import CardList from '@/components/CardList/CardList';
-import MainLayout from '@/components/MainLayout/MainLayout';
-import PostType, { authorT, ContentT, DescriptionT } from '@/interfaces/PostType';
-import { GetServerSideProps, NextPage } from 'next';
-import { getSession } from 'next-auth/client';
-import Snoowrap, { Submission } from 'snoowrap';
-import snoowConf from '@/utils/snow';
-import React from 'react';
-import useActions from '@/hooks/useActions';
-import { useTypedSelector } from '@/hooks/useTapedSelector';
-import Loader from 'react-loader-spinner';
+import CardList from "@/components/CardList/CardList";
+import MainLayout from "@/components/MainLayout/MainLayout";
+import { GetServerSideProps, NextPage } from "next";
+import React from "react";
 
-const Index: NextPage<Record<string, PostType[] | Submission | string>> = ({ postsData }) => {
-    const { FetchPosts } = useActions();
-    const { posts } = useTypedSelector(state => state);
-
-    React.useEffect(() => {
-        FetchPosts('gta');
-    }, []);
-    console.log(`posts `, posts);
-
-    return (
-        <MainLayout>
-            {posts.isLoading && (
-                <div>
-                    <Loader type="Circles" color="#cc6633" height={100} width={100} timeout={30000} />
-                </div>
-            )}
-            {/* <CardList postsArr={postsData ? JSON.parse(postsData as string) : null} /> */}
-            {/* <CardList postsArr={null} /> */}
-            {/* {postsData &&
+const Index: NextPage = () => {
+  return (
+    <MainLayout>
+      <CardList />
+      {/* <CardList postsArr={null} /> */}
+      {/* {postsData &&
                 postsData.length > 0 &&
                 postsData.map((str, i) => {
                     return (
@@ -37,8 +17,8 @@ const Index: NextPage<Record<string, PostType[] | Submission | string>> = ({ pos
                         </div>
                     );
                 })} */}
-        </MainLayout>
-    );
+    </MainLayout>
+  );
 };
 
 export default Index;
@@ -106,5 +86,3 @@ export default Index;
 //         props: { postsData: null },
 //     };
 // };
-
-// export default Index;
