@@ -1,21 +1,46 @@
 import PostType, { ContentT } from '@/interfaces/PostType';
 import React, { ReactElement } from 'react';
+import ReactPlayer from 'react-player';
+import GfycatContent from './GfycatContent/GfycatContent';
 import ImgContent from './ImgContent/ImgContent';
 
 import styles from './styles.module.scss';
+import VideoContent from './VideoContent/VideoContent';
 
 const CardContent: React.FC<PostType> = ({ content, content_size }) => {
     const { type, url } = content;
+    // const { height: contentHeight, width: ContentWidth } = content_size;
 
     const switchContent = (type: string): ReactElement => {
         switch (type) {
             case 'Image':
                 return (
                     <div className={styles.imgContainer}>
-                        <ImgContent src={url} intrinsicSize={content_size} />
+                        <ImgContent className={styles.contentContainer} src={url} intrinsicSize={content_size} />
                     </div>
                 );
-                break;
+            case 'Gif':
+                return (
+                    <div className={styles.imgContainer}>
+                        <GfycatContent src={url} intrinsicSize={content_size} />
+                        {/* <iframe
+                            src={url}
+                            className={styles.gfycat}
+                            scrolling="no"
+                            allowFullScreen={true}
+                            allow="autoplay; fullscreen"
+                            height={content_size.height}
+                            width={content_size.width}
+                            //   title={post.title}
+                        /> */}
+                    </div>
+                );
+            case 'Video':
+                return (
+                    <div className={styles.imgContainer}>
+                        <VideoContent src={url} className={styles.contentContainer} intrinsicSize={content_size} />
+                    </div>
+                );
             default:
                 return <div>{'ad'}</div>;
             // ImgPreviewContainer

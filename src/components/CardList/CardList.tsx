@@ -37,14 +37,14 @@ const CardList: React.FC<CardListProps> = () => {
         );
     }
 
-    const switchPosts = post => {
-        // console.log(post, ' ', post.data.);
-        if (post.data.content.type === 'Image') {
-            console.log(post);
-            // console.log(post.authorName);
-            // console.log(post.originalPost);
-        }
-    };
+    // const switchPosts = post => {
+    //     // console.log(post, ' ', post.data.);
+    //     if (post.data.content.type === 'Image') {
+    //         console.log(post);
+    //         // console.log(post.authorName);
+    //         // console.log(post.originalPost);
+    //     }
+    // };
 
     return (
         <>
@@ -52,7 +52,8 @@ const CardList: React.FC<CardListProps> = () => {
                 {posts &&
                     posts.posts.map(post => {
                         const { data, icon_img } = post;
-                        switchPosts(post);
+                        // switchPosts(post);
+                        console.log(post);
                         return (
                             <Card
                                 key={data.id}

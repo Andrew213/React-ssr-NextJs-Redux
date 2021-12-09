@@ -87,7 +87,7 @@ export const PostDisruction = (post: Submission): PostType => {
     if (post.is_video) {
         const { media } = post;
 
-        newPost.content = { type: 'Video', url: media.reddit_video.fallback_url };
+        newPost.content = { type: 'Video', url: media.reddit_video.hls_url };
 
         newPost.content_size = {
             width: (media.reddit_video as any).width,
@@ -102,7 +102,12 @@ export const PostDisruction = (post: Submission): PostType => {
     // Gfycat
 
     if (post.domain === 'gfycat.com') {
-        newPost.content.type = 'Gif';
+        const { media } = post;
+        newPost.content = { type: 'Gif' };
+        newPost.content_size = {
+            width: media.oembed.width,
+            height: media.oembed.height,
+        };
         if (post.url.includes('ifr')) {
             newPost.content.url = post.media.reddit_video.fallback_url;
         } else {
@@ -113,7 +118,7 @@ export const PostDisruction = (post: Submission): PostType => {
 
     // rich video (e.g. YouTube)
 
-    if (post.post_hint === 'rich:video' && post.media) {
+    if (post.post_hint === 'rich:video' && post.domain !== 'gfycat.com') {
         newPost.content = {
             type: 'RichVideo',
             url: post.media.oembed.html,
