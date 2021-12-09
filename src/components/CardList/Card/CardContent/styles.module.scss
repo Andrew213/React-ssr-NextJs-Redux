@@ -1,0 +1,13 @@
+.imgContainer {
+    overflow: hidden;
+    position: relative;
+    max-height: 70vh;
+
+    img {
+        width: 100%;
+        position: relative;
+        object-fit: contain;
+        max-height: 70vh;
+        z-index: 1;
+    }
+}

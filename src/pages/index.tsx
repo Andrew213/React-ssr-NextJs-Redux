@@ -1,14 +1,14 @@
-import CardList from "@/components/CardList/CardList";
-import MainLayout from "@/components/MainLayout/MainLayout";
-import { GetServerSideProps, NextPage } from "next";
-import React from "react";
+import CardList from '@/components/CardList/CardList';
+import MainLayout from '@/components/MainLayout/MainLayout';
+import { GetServerSideProps, NextPage } from 'next';
+import React from 'react';
 
 const Index: NextPage = () => {
-  return (
-    <MainLayout>
-      <CardList />
-      {/* <CardList postsArr={null} /> */}
-      {/* {postsData &&
+    return (
+        <MainLayout>
+            <CardList />
+            {/* <CardList postsArr={null} /> */}
+            {/* {postsData &&
                 postsData.length > 0 &&
                 postsData.map((str, i) => {
                     return (
@@ -17,8 +17,8 @@ const Index: NextPage = () => {
                         </div>
                     );
                 })} */}
-    </MainLayout>
-  );
+        </MainLayout>
+    );
 };
 
 export default Index;

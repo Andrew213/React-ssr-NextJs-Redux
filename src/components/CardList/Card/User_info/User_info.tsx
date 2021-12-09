@@ -5,16 +5,16 @@ import Typography from '@/lib/Typography/Typography';
 import Image from 'next/image';
 
 import styles from './styles.module.scss';
-import { authorT } from '@/interfaces/PostType';
 
 type User_infoProps = {
-    created?: string | number;
-    author?: authorT;
-    className?: string;
-    subreddit?: string;
+    created: string | number;
+    authorName: string;
+    authorAva: string;
+    className: string;
+    subreddit: string;
 };
 
-const User_info: React.FC<User_infoProps> = ({ subreddit, className, created, author }) => {
+const User_info: React.FC<User_infoProps> = ({ subreddit, className, created, authorName, authorAva }) => {
     return (
         <div className={cn(styles.userInfo, { [className]: className })}>
             <Typography As="p" size={14} className={styles.userInfo__published}>
@@ -22,7 +22,7 @@ const User_info: React.FC<User_infoProps> = ({ subreddit, className, created, au
             </Typography>
             <button className={styles.userInfo__profile}>
                 <Image
-                    src={author.icon_img ? author.icon_img : authorAvatar2}
+                    src={authorAva ? authorAva : authorAvatar2}
                     width={20}
                     height={20}
                     className={styles.userInfo__authorAvatar}
@@ -30,10 +30,12 @@ const User_info: React.FC<User_infoProps> = ({ subreddit, className, created, au
                     objectPosition="center"
                 />
                 <Typography As="p" size={14} className={styles.userInfo__author}>
-                    {author.name ? author.name : 'Anonim Anonim'}
+                    {authorName ? authorName : 'Anonim Anonim'}
                 </Typography>
             </button>
-            {subreddit && <button className={styles.userInfo__subreddit}>{`${subreddit}`}</button>}
+            {/* 
+          
+            {subreddit && <button className={styles.userInfo__subreddit}>{`${subreddit}`}</button>} */}
         </div>
     );
 };
