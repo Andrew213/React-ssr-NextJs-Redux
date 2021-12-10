@@ -8,6 +8,7 @@ export type authorT = {
 export type ContentT = {
     type: 'Gif' | 'GifV' | 'Image' | 'Self' | 'Video' | 'RichVideo' | 'justLink';
     url?: string;
+    isGif?: boolean;
 };
 
 type DescriptionT = {

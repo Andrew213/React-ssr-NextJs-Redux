@@ -86,9 +86,11 @@ const Card: React.FC<CardProps> = ({
                 <Typography As="p" className={styles.post__title} size={28} weight={600}>
                     {title}
                 </Typography>
-                <div className={styles.card__content}>
-                    <CardContent content={content} content_size={content_size} />
-                </div>
+                {content.url && (
+                    <div className={styles.card__content}>
+                        <CardContent content={content} content_size={content_size} />
+                    </div>
+                )}
             </li>
             {/* <li className={styles.card}>
                 {!WIDTH_990 && <CardControlMobile KarmaControl={Karma} />}

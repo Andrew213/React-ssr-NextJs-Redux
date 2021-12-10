@@ -37,23 +37,15 @@ const CardList: React.FC<CardListProps> = () => {
         );
     }
 
-    // const switchPosts = post => {
-    //     // console.log(post, ' ', post.data.);
-    //     if (post.data.content.type === 'Image') {
-    //         console.log(post);
-    //         // console.log(post.authorName);
-    //         // console.log(post.originalPost);
-    //     }
-    // };
-
     return (
         <>
             <ul className={styles.cardList}>
                 {posts &&
                     posts.posts.map(post => {
                         const { data, icon_img } = post;
-                        // switchPosts(post);
-                        console.log(post);
+                        if (data.authorName === 'NASBrakel') {
+                            console.log(post);
+                        }
                         return (
                             <Card
                                 key={data.id}
@@ -62,6 +54,7 @@ const CardList: React.FC<CardListProps> = () => {
                                 authorAvatar={icon_img}
                                 score={data.score}
                                 created={data.created}
+                                subredditName_display={data.subredditName_prefix}
                                 content={data.content}
                                 content_size={data.content_size}
                                 commentsCount={data.commentsCount}
@@ -70,40 +63,6 @@ const CardList: React.FC<CardListProps> = () => {
                     })}
             </ul>
         </>
-        // session &&
-        // postsArr && (
-        //   <>
-        //     <div className={styles.cardList}>
-        //       <ul>
-        //         {postsArr.map((post: PostType, i) => {
-        //           const created = formatUnixDate(post.created);
-        //           const pubTime = `${
-        //             width > 460 ? "опубликованно" : ""
-        //           } ${created} ${declOfNum(created, ARR_HOUR)} назад`;
-
-        //           return (
-        //             <Card
-        //               author={post.author}
-        //               created={pubTime}
-        //               // thumbnail_height={post.thumbnail_height}
-        //               // thumbnail_width={post.thumbnail_width}
-        //               score={post.score}
-        //               key={post.id}
-        //               id={`${post.id}`}
-        //               title={post.title}
-        //               contentImg_Height={post.contentImg_Height}
-        //               contentImg_Width={post.contentImg_Width}
-        //               thumbnail={post.thumbnail}
-        //               content={post.content}
-        //               permalink={post.permalink}
-        //               description={post.description}
-        //             />
-        //           );
-        //         })}
-        //       </ul>
-        //     </div>
-        //   </>
-        // )
     );
 };
 

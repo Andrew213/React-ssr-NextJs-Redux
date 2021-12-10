@@ -1,115 +1,105 @@
-import PostType, { ContentT } from '@/interfaces/PostType';
+import PostType from '@/interfaces/PostType';
 import React, { ReactElement } from 'react';
 import ReactPlayer from 'react-player';
-import GfycatContent from './GfycatContent/GfycatContent';
-import ImgContent from './ImgContent/ImgContent';
-
+import Image from 'next/image';
+import ContentContainer from './ContentContainer/ContentContainer';
+import { splitUrl } from '@/utils/postTransform';
+import parse from 'html-react-parser';
+import ParserOptions from 'html-react-parser';
+import domToReact, { HTMLReactParserOptions } from 'html-react-parser/lib/dom-to-react';
+import { Element } from 'domhandler/lib/node';
 import styles from './styles.module.scss';
-import VideoContent from './VideoContent/VideoContent';
 
 const CardContent: React.FC<PostType> = ({ content, content_size }) => {
     const { type, url } = content;
-    // const { height: contentHeight, width: ContentWidth } = content_size;
 
     const switchContent = (type: string): ReactElement => {
+        let selfHtmlText;
+
+        if (type === 'Self') {
+            selfHtmlText = parse(url, {
+                replace: domnode => {
+                    if (domnode instanceof Element && domnode.attribs && domnode.name === 'a') {
+                        const [domain, rest] = splitUrl(domnode.attribs.href);
+                        const lowerDomain = domain.toLocaleLowerCase();
+                        if (/(reddit\.com|saturnusapp)/.exec(lowerDomain)) {
+                            console.log(domnode);
+                            return (
+                                <a href={rest} target="_blank" rel="noreferrer">
+                                    {domnode.children[0].data}
+                                </a>
+                            );
+                        }
+                        if (domnode.attribs.href.startsWith('/r/')) {
+                            return (
+                                <a href={domnode.attribs.href} target="_blank" rel="noreferrer">
+                                    {domnode.attribs.href}
+                                </a>
+                            );
+                        }
+                    }
+                    return domnode;
+                },
+            });
+        }
+
         switch (type) {
             case 'Image':
                 return (
-                    <div className={styles.imgContainer}>
-                        <ImgContent className={styles.contentContainer} src={url} intrinsicSize={content_size} />
+                    <div className={styles.contentContainer}>
+                        <ContentContainer intrinsicSize={content_size}>
+                            <Image src={url} layout="fill" quality={80} objectFit="contain" />
+                        </ContentContainer>
                     </div>
                 );
             case 'Gif':
                 return (
-                    <div className={styles.imgContainer}>
-                        <GfycatContent src={url} intrinsicSize={content_size} />
-                        {/* <iframe
-                            src={url}
-                            className={styles.gfycat}
-                            scrolling="no"
-                            allowFullScreen={true}
-                            allow="autoplay; fullscreen"
-                            height={content_size.height}
-                            width={content_size.width}
-                            //   title={post.title}
-                        /> */}
+                    <div className={styles.contentContainer}>
+                        <ContentContainer intrinsicSize={content_size}>
+                            <iframe
+                                src={url}
+                                className={styles.gfycat}
+                                scrolling="no"
+                                allowFullScreen={true}
+                                allow="autoplay; fullscreen"
+                            />
+                        </ContentContainer>
                     </div>
                 );
             case 'Video':
                 return (
-                    <div className={styles.imgContainer}>
-                        <VideoContent src={url} className={styles.contentContainer} intrinsicSize={content_size} />
+                    <div className={styles.contentContainer}>
+                        <ContentContainer intrinsicSize={content_size}>
+                            <ReactPlayer url={url} playing={!content?.isGif} muted controls />
+                        </ContentContainer>
                     </div>
                 );
-            default:
-                return <div>{'ad'}</div>;
-            // ImgPreviewContainer
-            // case 'Gif':
-            //     return (
-            //         <ul>
-            //             <li>
-            //                 <h1>{`Пост с типом: ${post.content.type}`}</h1>
-            //                 <h1>{`Aвтор: ${post.authorName}`}</h1>
-            //             </li>
-            //             <li>{`Заголовок поста: ${post.title}`}</li>
-            //             <li>{`Данные поста: ${post.content.url}`}</li>
-            //         </ul>
-            //     );
-            // case 'Video':
-            //     return (
-            //         <ul>
-            //             <li>
-            //                 <h1>{`Пост с типом: ${post.content.type}`}</h1>
-            //                 <h1>{`Aвтор: ${post.authorName}`}</h1>
-            //             </li>
-            //             <li>{`Заголовок поста: ${post.title}`}</li>
-            //             <li>{`Данные поста: ${post.content.url}`}</li>
-            //         </ul>
-            //     );
-            // case 'Self':
-            //     return (
-            //         <ul>
-            //             <li>
-            //                 <h1>{`Пост с типом: ${post.content.type}`}</h1>
-            //                 <h1>{`Aвтор: ${post.authorName}`}</h1>
-            //             </li>
-            //             <li>{`Заголовок поста: ${post.title}`}</li>
-            //             <li>{`Данные поста: ${post.selfTextHtml}`}</li>
-            //         </ul>
-            //     );
             // case 'GifV':
             //     return (
-            //         <ul>
-            //             <li>
-            //                 <h1>{`Пост с типом: ${post.content.type}`}</h1>
-            //                 <h1>{`Aвтор: ${post.authorName}`}</h1>
-            //             </li>
-            //             <li>{`Заголовок поста: ${post.title}`}</li>
-            //             <li>{`Данные поста: ${post.content.url}`}</li>
-            //         </ul>
+            //         <div className={styles.contentContainer}>
+            //             <ContentContainer intrinsicSize={content_size}>
+            //                 <ReactPlayer url={url} playing={!content?.isGif} muted controls />
+            //             </ContentContainer>
+            //         </div>
             //     );
-            // case 'RichVideo':
-            //     return (
-            //         <ul>
-            //             <li>
-            //                 <h1>{`Пост с типом: ${post.content.type}`}</h1>
-            //                 <h1>{`Aвтор: ${post.authorName}`}</h1>
-            //             </li>
-            //             <li>{`Заголовок поста: ${post.title}`}</li>
-            //             <li>{`Данные поста: ${post.content.url}`}</li>
-            //         </ul>
-            //     );
-            // case 'justLink':
-            //     return (
-            //         <ul>
-            //             <li>
-            //                 <h1>{`Пост с типом: ${post.content.type}`}</h1>
-            //                 <h1>{`Aвтор: ${post.authorName}`}</h1>
-            //             </li>
-            //             <li>{`Заголовок поста: ${post.title}`}</li>
-            //             <li>{`Данные поста: ${post.content.url}`}</li>
-            //         </ul>
-            //     );
+            case 'justLink':
+                return (
+                    <a href={url} target="_blank" rel="noreferrer">
+                        {url}
+                    </a>
+                );
+            case 'RichVideo':
+                return (
+                    <div className={styles.contentContainer}>
+                        <ContentContainer intrinsicSize={content_size}>
+                            <div dangerouslySetInnerHTML={{ __html: url }} className={styles.rich} />
+                        </ContentContainer>
+                    </div>
+                );
+            case 'Self':
+                return <div>{selfHtmlText}</div>;
+            default:
+                return <div>{'ad'}</div>;
         }
     };
 

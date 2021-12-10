@@ -35,14 +35,14 @@ export const PostDisruction = (post: Submission): PostType => {
     if (post.is_self) {
         newPost.content = { type: 'Self' };
         if (!post.selftext_html) {
-            newPost.selfTextHtml = '';
+            newPost.content.url = '';
         }
 
         if (isHidden) {
-            newPost.selfTextHtml = 'Hidden text';
+            newPost.content.url = 'Hidden text';
         }
 
-        newPost.selfTextHtml = post.selftext_html;
+        newPost.content.url = post.selftext_html;
     }
 
     //   image
@@ -65,7 +65,7 @@ export const PostDisruction = (post: Submission): PostType => {
     //imgur gifv
 
     if (post.domain === 'i.imgur.com' && post.url.indexOf('gifv') !== 0) {
-        newPost.content = { type: 'GifV', url: post.url.replace('.gifv', '.mp4') };
+        newPost.content = { type: 'Image', url: post.url.replace('.gifv', '.mp4') };
 
         const redditVideoPreview = (post.preview as any).reddit_video_preview;
 
@@ -95,7 +95,9 @@ export const PostDisruction = (post: Submission): PostType => {
         };
 
         if (post.media.reddit_video.is_gif) {
-            newPost.content.type = 'Gif';
+            newPost.content.isGif = true;
+            // const rest = splitUrl(post.url)[1];
+            // newPost.content.url = `https://gfycat.com/ifr${rest}`;
         }
     }
 
@@ -123,6 +125,7 @@ export const PostDisruction = (post: Submission): PostType => {
             type: 'RichVideo',
             url: post.media.oembed.html,
         };
+        newPost.content_size = { width: post.media_embed.width, height: post.media_embed.height };
     }
 
     // Where is gallery_data in types??? wtf.

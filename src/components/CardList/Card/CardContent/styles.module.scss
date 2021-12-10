@@ -1,20 +1,20 @@
-.imgContainer {
+.contentContainer {
     overflow: hidden;
     position: relative;
     max-height: 70vh;
 
-    img {
+    video,
+    iframe {
+        position: absolute;
         width: 100%;
-        position: relative;
-        object-fit: contain;
         max-height: 70vh;
-        z-index: 1;
+        height: 100%;
     }
 }
 
-.gfycat {
-    // position: absolute;
-}
-
-.contentContainer {
+.rich {
+    position: absolute;
+    width: 100%;
+    max-height: 70vh;
+    height: 100%;
 }

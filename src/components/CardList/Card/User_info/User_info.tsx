@@ -33,9 +33,7 @@ const User_info: React.FC<User_infoProps> = ({ subreddit, className, created, au
                     {authorName ? authorName : 'Anonim Anonim'}
                 </Typography>
             </button>
-            {/* 
-          
-            {subreddit && <button className={styles.userInfo__subreddit}>{`${subreddit}`}</button>} */}
+            {subreddit && <button className={styles.userInfo__subreddit}>{`${subreddit}`}</button>}
         </div>
     );
 };
