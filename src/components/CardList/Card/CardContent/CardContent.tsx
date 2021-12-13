@@ -17,17 +17,24 @@ const CardContent: React.FC<PostType> = ({ content, content_size }) => {
         let selfHtmlText;
 
         if (type === 'Self') {
+            // console.log(url);
             selfHtmlText = parse(url, {
                 replace: domnode => {
                     if (domnode instanceof Element && domnode.attribs && domnode.name === 'a') {
                         const [domain, rest] = splitUrl(domnode.attribs.href);
                         const lowerDomain = domain.toLocaleLowerCase();
-                        if (/(reddit\.com|saturnusapp)/.exec(lowerDomain)) {
-                            console.log(domnode);
+                        if (/(reddit\.com)/.exec(lowerDomain)) {
                             return (
                                 <a href={rest} target="_blank" rel="noreferrer">
-                                    {domnode.children[0].data}
+                                    {(domnode.children[0] as any).data}
                                 </a>
+                            );
+                        }
+                        if (domnode.attribs.href.includes('.png')) {
+                            return (
+                                <div className={styles.contentContainer}>
+                                    <img src={domnode.attribs.href} alt="" />
+                                </div>
                             );
                         }
                         if (domnode.attribs.href.startsWith('/r/')) {
@@ -97,7 +104,7 @@ const CardContent: React.FC<PostType> = ({ content, content_size }) => {
                     </div>
                 );
             case 'Self':
-                return <div>{selfHtmlText}</div>;
+                return <>{selfHtmlText}</>;
             default:
                 return <div>{'ad'}</div>;
         }

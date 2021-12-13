@@ -137,7 +137,11 @@ export const PostDisruction = (post: Submission): PostType => {
     if (
         post.post_hint === 'link' ||
         (post as PostWithGalleryData).gallery_data ||
-        (post as PostWithGalleryData).tournament_data
+        (post as PostWithGalleryData).tournament_data ||
+        (!post.domain.startsWith('self') &&
+            !post.domain.startsWith('v.redd') &&
+            !post.domain.startsWith('i.redd') &&
+            !post.domain.startsWith('youtu.be'))
     ) {
         newPost.content = {
             type: 'justLink',

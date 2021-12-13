@@ -5,7 +5,7 @@ import report from '@img/icons/Desktop/report.svg';
 import comments from '@img/icons/comments.svg';
 import { ListProps } from '@/lib/List/List';
 
-export const dropDownList: ListProps[] = [
+export const dropDownList = [
     {
         id: 'Comments',
         text: 'Комментарии',

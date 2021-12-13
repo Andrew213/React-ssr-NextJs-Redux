@@ -3,35 +3,56 @@ import cn from 'classnames';
 import Icon from '@/lib/Icon/Icon';
 
 import style from './styles.module.scss';
+import Li from './Li';
+import Option from './Option';
 
 export type ListProps = {
-    id: string;
-    text: string;
+    // id: string;
+    // text: string;
     className?: string;
-    As?: 'a' | 'li' | 'button' | 'div';
+    // As?: 'a' | 'li' | 'button' | 'div';
     href?: string;
     smthToSend?: string | number | Record<string, any>;
     liIcon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-    onClick?: (id: string, smthTosend?: string | number | Record<string, any>) => void;
+    children?: React.ReactNode;
+    onChange?: (value: string | number, labeledValue: React.ReactNode) => void;
     onMouseEnter?: (id?: string) => void;
 };
 
-const List: React.FC<ListProps> = props => {
-    const { id, text, className, As, href, liIcon, onClick, onMouseEnter, smthToSend } = props;
+type ListContext = {
+    // width: number | string;
+    onOptionClick: (value: string | number, labeledValue: React.ReactNode) => void;
+};
 
-    const handleMouseEnter = React.useCallback(() => onMouseEnter && onMouseEnter(id ? id : undefined), [
-        id,
-        onMouseEnter,
-    ]);
+export const ListContext = React.createContext<ListContext>({ onOptionClick: () => undefined });
 
-    const handleClick = React.useCallback(() => onClick && onClick(id, smthToSend), [id, onClick, smthToSend]);
+function List(props: ListProps): React.ReactElement {
+    const { children, className, As, href, liIcon, onChange, onMouseEnter, smthToSend } = props;
+
+    const onOptionClick = React.useCallback(
+        (value: string | number, labeledValue: React.ReactNode) => {
+            onChange && onChange(value, labeledValue);
+        },
+        [onChange]
+    );
+
+    const providerValue = {
+        onOptionClick,
+    };
+    // const handleClick = React.useCallback(() => onClick && onClick(id, smthToSend), [id, onClick, smthToSend]);
 
     return (
-        <As className={className} onClick={handleClick} key={id} href={href} onMouseEnter={handleMouseEnter}>
-            {liIcon && <Icon component={liIcon} />}
-            <p className={cn({ [style.text]: liIcon })}>{text}</p>
-        </As>
+        <ListContext.Provider value={providerValue}>
+            <ul className={className}>{children}</ul>
+            {/* <As className={className} onClick={handleClick} key={id} href={href} onMouseEnter={handleMouseEnter}>
+                {liIcon && <Icon component={liIcon} />}
+                <p className={cn({ [style.text]: liIcon })}>{text}</p>
+            </As> */}
+        </ListContext.Provider>
     );
-};
+}
+
+List.Li = Li;
+List.Option = Option;
 
 export default List;

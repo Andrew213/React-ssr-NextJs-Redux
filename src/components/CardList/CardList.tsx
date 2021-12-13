@@ -43,7 +43,7 @@ const CardList: React.FC<CardListProps> = () => {
                 {posts &&
                     posts.posts.map(post => {
                         const { data, icon_img } = post;
-                        if (data.authorName === 'NASBrakel') {
+                        if (data.authorName === '-HDVinnie-') {
                             console.log(post);
                         }
                         return (
@@ -56,6 +56,7 @@ const CardList: React.FC<CardListProps> = () => {
                                 created={data.created}
                                 subredditName_display={data.subredditName_prefix}
                                 content={data.content}
+                                originalPost={data.originalPost}
                                 content_size={data.content_size}
                                 commentsCount={data.commentsCount}
                             />

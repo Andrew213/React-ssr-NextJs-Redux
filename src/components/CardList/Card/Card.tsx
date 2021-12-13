@@ -1,12 +1,11 @@
 import React from 'react';
 import Image from 'next/image';
-import pic from '@img/pic.jpg';
-import viewed from '@img/icons/viewed.svg';
 import { CSSTransition } from 'react-transition-group';
 import DropDown from '@/lib/DropDown/DropDown';
 import List from '@/lib/List/List';
 import Karma from './Karma/Karma';
 import Icon from '@/lib/Icon/Icon';
+import { useRouter } from 'next/router';
 import useWindowSize from '@/hooks/useWindowSize';
 import CardControlMobile from './CardControlMobile/CardControlMobile';
 import User_info from './User_info/User_info';
@@ -14,8 +13,7 @@ import { dropDownList } from '@/utils/dropDownList';
 import Loader from 'react-loader-spinner';
 import Post from '@/components/Post/Post';
 import PostType from '@/interfaces/PostType';
-import { Link, animateScroll as scroll } from 'react-scroll';
-import { useDispatch } from 'react-redux';
+import { animateScroll as scroll } from 'react-scroll';
 import Typography from '@/lib/Typography/Typography';
 import CardContent from './CardContent/CardContent';
 
@@ -33,6 +31,7 @@ const Card: React.FC<CardProps> = ({
     title,
     created,
     authorAvatar,
+    commentsCount,
     score,
     content_size,
     permalink,
@@ -44,15 +43,15 @@ const Card: React.FC<CardProps> = ({
 
     const [isPostOpen, setIsPostOpen] = React.useState(false);
 
-    const WIDTH_990 = width > 990;
+    const router = useRouter();
 
-    const dispatch = useDispatch();
+    const WIDTH_990 = width > 990;
 
     const titleRef = React.useRef(null);
 
     const handlePostClick = React.useCallback(() => {
-        scroll.scrollTo(100);
-
+        // void router.replace('/example');
+        // scroll.scrollTo(100);
         // void fetch(`/api/comments/getPostComments`, {
         //     method: 'POST',
         //     headers: {
@@ -62,13 +61,19 @@ const Card: React.FC<CardProps> = ({
         // })
         //     .then(resp => resp.json())
         //     .then(commentsArr => dispatch(commentsFetchDataSuccess(commentsArr)));
-
-        setIsPostOpen(prev => !prev);
+        // setIsPostOpen(prev => !prev);
     }, []);
 
     const handleOnPostClose = React.useCallback(() => {
         setIsPostOpen(false);
     }, []);
+
+    const switchCardMenu = (val: string) => {
+        switch (val) {
+            case 'Comments':
+                handlePostClick();
+        }
+    };
 
     return (
         <>
@@ -82,6 +87,41 @@ const Card: React.FC<CardProps> = ({
                         authorAva={authorAvatar}
                         created={created}
                     />
+                    <div className={styles.card__menuWrapper}>
+                        <DropDown
+                            trigger={
+                                <button className={styles.card__menu}>
+                                    <div className={styles.card__emptyArea} />
+                                </button>
+                            }
+                            triggerActive={styles.card__menuTrigger_active}
+                            className={styles.card__menuList}
+                        >
+                            <List onChange={switchCardMenu}>
+                                {dropDownList.map(({ id, text, liIcon, As }) => {
+                                    return (
+                                        <List.Option key={id} value={id} liIcon={liIcon} className={styles.listItem}>
+                                            {text}
+                                        </List.Option>
+                                    );
+                                })}
+                            </List>
+
+                            {/* {dropDownList.map(({ id, text, liIcon, As }) => {
+                                return (
+                                    <List
+                                        id={id}
+                                        key={id}
+                                        As={As}
+                                        text={text}
+                                        className={styles.listItem}
+                                        liIcon={liIcon}
+                                    />
+                                );
+                            })} */}
+                        </DropDown>
+                        {/* {WIDTH_990 && <Karma className={styles.card__karma} score={score} />} */}
+                    </div>
                 </div>
                 <Typography As="p" className={styles.post__title} size={28} weight={600}>
                     {title}
