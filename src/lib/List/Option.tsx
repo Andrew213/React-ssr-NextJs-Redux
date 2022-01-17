@@ -16,6 +16,8 @@ export type OptionProps = {
     liIcon?: string;
 };
 
+let foo: NodeJS.Timeout;
+
 const Option: React.ForwardRefRenderFunction<unknown, OptionProps> = (props, ref) => {
     const { value, children, className, style, disabled, selected, clickStopPropagation, onMouseEnter, liIcon } = props;
     const { onOptionClick } = React.useContext(ListContext);

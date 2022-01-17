@@ -1,5 +1,6 @@
 import CardList from '@/components/CardList/CardList';
 import MainLayout from '@/components/MainLayout/MainLayout';
+import Modal from '@/lib/Modal/modal';
 import { GetServerSideProps, NextPage } from 'next';
 import React from 'react';
 

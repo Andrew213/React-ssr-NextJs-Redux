@@ -27,7 +27,7 @@ type ListContext = {
 export const ListContext = React.createContext<ListContext>({ onOptionClick: () => undefined });
 
 function List(props: ListProps): React.ReactElement {
-    const { children, className, As, href, liIcon, onChange, onMouseEnter, smthToSend } = props;
+    const { children, className, href, liIcon, onChange, onMouseEnter, smthToSend } = props;
 
     const onOptionClick = React.useCallback(
         (value: string | number, labeledValue: React.ReactNode) => {

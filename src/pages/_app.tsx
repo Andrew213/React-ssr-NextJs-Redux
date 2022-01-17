@@ -2,7 +2,6 @@ import { ReactElement } from 'react';
 import App, { AppContext, AppProps } from 'next/app';
 import { Provider } from 'react-redux';
 import { store } from '@/state/store';
-import { useStore } from '@/store/store';
 import { Session } from 'next-auth';
 import { getSession, GetSessionOptions, Provider as SessionProvider } from 'next-auth/client';
 

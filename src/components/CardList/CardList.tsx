@@ -7,11 +7,9 @@ import useWindowSize from '@/hooks/useWindowSize';
 import useActions from '@/hooks/useActions';
 import Card from './Card/Card';
 import { useTypedSelector } from '@/hooks/useTapedSelector';
-import { PostsState } from '@/state/posts/PostState';
+import Router, { useRouter } from 'next/router';
 
 import styles from './styles.module.scss';
-
-const ARR_HOUR = ['час', 'часа', 'часов'];
 
 type CardListProps = {
     postsArr?: PostType[];
@@ -20,12 +18,24 @@ type CardListProps = {
 const CardList: React.FC<CardListProps> = () => {
     const [session, load] = useSession();
     const { FetchPosts } = useActions();
+    const router = useRouter();
     const { posts } = useTypedSelector(state => state);
 
     React.useEffect(() => {
         // Принимает 3 параметра: 1-subreddit, 2-sortmod, 3-time
-        FetchPosts();
+        FetchPosts('world', 'top');
     }, []);
+
+    // React.useEffect(() => {
+    //     void Router.push({
+    //         pathname: '/',
+    //         query: { keyword: 'this way', amogus: 'abobus' },
+    //     });
+
+    //     const query = new URLSearchParams();
+    //     // return query.get(name);
+    //     console.log(`query`, query);
+    // }, []);
 
     const { width, height } = useWindowSize();
 
@@ -48,11 +58,12 @@ const CardList: React.FC<CardListProps> = () => {
                         }
                         return (
                             <Card
-                                key={data.id}
                                 authorName={data.authorName}
+                                key={data.id}
                                 title={data.title}
                                 authorAvatar={icon_img}
                                 score={data.score}
+                                id={data.id}
                                 created={data.created}
                                 subredditName_display={data.subredditName_prefix}
                                 content={data.content}

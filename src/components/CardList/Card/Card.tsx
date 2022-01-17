@@ -17,7 +17,9 @@ import { animateScroll as scroll } from 'react-scroll';
 import Typography from '@/lib/Typography/Typography';
 import CardContent from './CardContent/CardContent';
 
+import Link from 'next/link';
 import styles from './styles.module.scss';
+import Modal from '@/lib/Modal/modal';
 
 interface CardProps extends PostType {
     onPostClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -64,6 +66,8 @@ const Card: React.FC<CardProps> = ({
         // setIsPostOpen(prev => !prev);
     }, []);
 
+    const [active, setActive] = React.useState(false);
+
     const handleOnPostClose = React.useCallback(() => {
         setIsPostOpen(false);
     }, []);
@@ -75,8 +79,39 @@ const Card: React.FC<CardProps> = ({
         }
     };
 
+    const openModal = React.useCallback(() => {
+        setActive(true);
+    }, []);
+
+    const onTitleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        openModal();
+        // void router.push(
+        //     {
+        //         pathname: `/`,
+        //         query: { postId: `${id}` },
+        //     },
+        //     undefined,
+        //     // {
+        //     //     pathname: `/post/${id}`,
+        //     // },
+        //     { shallow: true }
+        // );
+
+        // const query = new URLSearchParams();
+        // return query.get(name);
+        // console.log(`query`, query);
+        // console.log(`pathname`, router.query);
+    };
+
+    const closeModal = React.useCallback(() => {
+        setActive(false);
+    }, []);
     return (
         <>
+            <Modal visible={active} onCancel={closeModal}>
+                {'aboba'}
+            </Modal>
             <li className={styles.card}>
                 <div className={styles.card__header}>
                     <Karma className={styles.card__karma} score={score} />
@@ -106,45 +141,35 @@ const Card: React.FC<CardProps> = ({
                                     );
                                 })}
                             </List>
-
-                            {/* {dropDownList.map(({ id, text, liIcon, As }) => {
-                                return (
-                                    <List
-                                        id={id}
-                                        key={id}
-                                        As={As}
-                                        text={text}
-                                        className={styles.listItem}
-                                        liIcon={liIcon}
-                                    />
-                                );
-                            })} */}
                         </DropDown>
                         {/* {WIDTH_990 && <Karma className={styles.card__karma} score={score} />} */}
                     </div>
+                    {/* <Link href={`/?postId=${id}`} as={`/post/${id}`}>
+                        <p className={styles.card__title}>{title}</p>
+                    </Link> */}
+                    <button onClick={onTitleClick} className={styles.card__titleBtn}>
+                        <p className={styles.card__title}>{title}</p>
+                    </button>
+                    {content.url && (
+                        <div className={styles.card__content}>
+                            <CardContent content={content} content_size={content_size} />
+                        </div>
+                    )}
                 </div>
-                <Typography As="p" className={styles.post__title} size={28} weight={600}>
-                    {title}
-                </Typography>
-                {content.url && (
-                    <div className={styles.card__content}>
-                        <CardContent content={content} content_size={content_size} />
-                    </div>
-                )}
             </li>
             {/* <li className={styles.card}>
                 {!WIDTH_990 && <CardControlMobile KarmaControl={Karma} />}
                 {thumbnail && (
                     <div className={styles.card__imgWrapper}>
-                        <Image src={thumbnail} layout="fill" quality={50} className={styles.card__img} />
+                    <Image src={thumbnail} layout="fill" quality={50} className={styles.card__img} />
                     </div>
-                )}
+                    )}
                 <div className={styles.card__info}>
-                    <button onClick={handlePostClick} className={styles.card__titleBtn} ref={titleRef}>
+                <button onClick={handlePostClick} className={styles.card__titleBtn} ref={titleRef}>
                         <h2 className={styles.card__title}>{title}</h2>
-                    </button>
-                    <User_info created={`${created}`} author={author} />
-                    <div className={styles.card__viewed}>
+                        </button>
+                        <User_info created={`${created}`} author={author} />
+                        <div className={styles.card__viewed}>
                         <Icon component={viewed} />
                         <p className={styles.card__viewedText}>1 час назад</p>
                     </div>

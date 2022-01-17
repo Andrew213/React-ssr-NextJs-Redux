@@ -91,7 +91,7 @@ const CardContent: React.FC<PostType> = ({ content, content_size }) => {
             //     );
             case 'justLink':
                 return (
-                    <a href={url} target="_blank" rel="noreferrer">
+                    <a href={url} target="_blank" rel="noreferrer" className={styles.justLink}>
                         {url}
                     </a>
                 );

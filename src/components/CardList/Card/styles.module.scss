@@ -13,6 +13,27 @@
         position: relative;
     }
 
+    &__titleBtn {
+        display: contents;
+    }
+
+    &__title {
+        transition: color 0.3s;
+        padding-bottom: 8px;
+        overflow: hidden;
+        margin-top: -10px;
+        padding-top: 10px;
+        text-overflow: ellipsis;
+        font-size: 28px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        text-align: left;
+        &:hover {
+            color: $orange;
+        }
+    }
+
     &__karma {
         position: absolute;
         left: -58px;
