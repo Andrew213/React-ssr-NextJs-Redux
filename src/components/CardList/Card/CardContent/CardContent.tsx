@@ -10,7 +10,7 @@ import domToReact, { HTMLReactParserOptions } from 'html-react-parser/lib/dom-to
 import { Element } from 'domhandler/lib/node';
 import styles from './styles.module.scss';
 
-const CardContent: React.FC<PostType> = ({ content, content_size }) => {
+const CardContent: React.FC<PostType> = ({ content, content_size, postInPopup }) => {
     const { type, url } = content;
 
     const switchContent = (type: string): ReactElement => {

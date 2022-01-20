@@ -41,6 +41,7 @@ export default interface PostType {
     over18?: boolean;
     permalink?: string;
     post_himt?: string;
+    postInPopup?: boolean;
     preview?: string;
     saved?: boolean;
     score?: number;

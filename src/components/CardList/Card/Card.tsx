@@ -1,10 +1,8 @@
 import React from 'react';
-import Image from 'next/image';
-import { CSSTransition } from 'react-transition-group';
+import cn from 'classnames';
 import DropDown from '@/lib/DropDown/DropDown';
 import List from '@/lib/List/List';
 import Karma from './Karma/Karma';
-import Icon from '@/lib/Icon/Icon';
 import { useRouter } from 'next/router';
 import useWindowSize from '@/hooks/useWindowSize';
 import CardControlMobile from './CardControlMobile/CardControlMobile';
@@ -24,7 +22,6 @@ import styles from './styles.module.scss';
 interface CardProps extends PostType {
     onPostClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     isPostOpen?: boolean;
-    postInPopup?: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -54,6 +51,7 @@ const Card: React.FC<CardProps> = ({
     const titleRef = React.useRef(null);
 
     const handlePostClick = React.useCallback(() => {
+        console.log(1);
         // void router.replace('/example');
         // scroll.scrollTo(100);
         // void fetch(`/api/comments/getPostComments`, {
@@ -118,17 +116,20 @@ const Card: React.FC<CardProps> = ({
     };
     return (
         <>
-            <li className={styles.card}>
-                <div className={styles.card__header}>
-                    <Karma className={styles.card__karma} score={score} />
+            <li className={cn(styles.card, { [styles.cardInPopup]: postInPopup })}>
+                <div className={cn(styles.card__header, { [styles.cardInPopup__header]: postInPopup })}>
+                    <Karma
+                        className={cn(styles.card__karma, { [styles.cardInPopup__karma]: postInPopup })}
+                        score={score}
+                    />
                     <User_info
-                        className={styles.post__userInfo}
+                        className={cn(styles.post__userInfo, { [styles.cardInPopup__userInfo]: postInPopup })}
                         subreddit={subredditName_display}
                         authorName={authorName}
                         authorAva={authorAvatar}
                         created={created}
                     />
-                    <div className={styles.card__menuWrapper}>
+                    <div className={cn(styles.card__menuWrapper, { [styles.cardInPopup__menuWrapper]: postInPopup })}>
                         <DropDown
                             trigger={
                                 <button className={styles.card__menu}>
@@ -150,15 +151,38 @@ const Card: React.FC<CardProps> = ({
                         </DropDown>
                         {/* {WIDTH_990 && <Karma className={styles.card__karma} score={score} />} */}
                     </div>
-                    <button onClick={onTitleClick} className={styles.card__titleBtn}>
-                        <p className={styles.card__title}>{title}</p>
+                    <button
+                        onClick={onTitleClick}
+                        className={cn(styles.card__titleBtn, { [styles.cardInPopup__titleBtn]: postInPopup })}
+                    >
+                        <p className={cn(styles.card__title, { [styles.cardInPopup__title]: postInPopup })}>{title}</p>
                     </button>
                     {content.url && (
-                        <div className={styles.card__content}>
+                        <div className={cn(styles.card__content, { [styles.cardInPopup__content]: postInPopup })}>
                             <CardContent content={content} content_size={content_size} />
                         </div>
                     )}
                 </div>
+                {postInPopup && (
+                    <div className={cn(styles.cardInPopup__controlWrapper)}>
+                        <List onChange={switchCardMenu} className={styles.cardInPopup__control}>
+                            {dropDownList.map(({ id, text, liIcon, As }, i) => {
+                                if (id === 'Close') delete dropDownList[i];
+
+                                return (
+                                    <List.Option
+                                        key={id}
+                                        value={id}
+                                        liIcon={liIcon}
+                                        className={styles.cardInPopup__listItem}
+                                    >
+                                        {text}
+                                    </List.Option>
+                                );
+                            })}
+                        </List>
+                    </div>
+                )}
             </li>
             {/* <li className={styles.card}>
                 {!WIDTH_990 && <CardControlMobile KarmaControl={Karma} />}
@@ -233,7 +257,8 @@ const Card: React.FC<CardProps> = ({
                     onClose={handleOnPostClose}
                 />
             </CSSTransition> */}
-            <Modal visible={active} onCancel={onModalClose} width={1000}>
+
+            <Modal visible={active} onCancel={onModalClose} width={1000} className={styles.modal}>
                 <Card
                     id={id}
                     content={content}
@@ -244,6 +269,7 @@ const Card: React.FC<CardProps> = ({
                     created={created}
                     title={title}
                     authorAvatar={authorAvatar}
+                    postInPopup={true}
                 />
             </Modal>
         </>

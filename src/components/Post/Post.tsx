@@ -207,10 +207,10 @@ const Post: React.FC<PostProps> = ({
                         }
                         return (
                             <List
-                                id={el.id}
+                                // id={el.id}
                                 key={el.id}
-                                As={el.As}
-                                text={el.text}
+                                // As={el.As}
+                                // text={el.text}
                                 className={styles.listItem}
                                 liIcon={el.liIcon}
                             />
