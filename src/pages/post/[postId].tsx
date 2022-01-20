@@ -5,7 +5,7 @@ import { useRouter } from 'next/dist/client/router';
 
 const Post: NextPage = () => {
     const router = useRouter();
-    console.log(`routerQuery `, router.query);
+
     return (
         <MainLayout>
             <h1>we</h1>

@@ -1,24 +1,34 @@
 import CardList from '@/components/CardList/CardList';
 import MainLayout from '@/components/MainLayout/MainLayout';
-import Modal from '@/lib/Modal/modal';
+import Modal from '@/lib/Modal/Modal';
 import { GetServerSideProps, NextPage } from 'next';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 const Index: NextPage = () => {
+    const router = useRouter();
+    const onModalClose = () => {
+        void router.push(
+            {
+                pathname: `/`,
+            },
+            undefined,
+            // {
+            //     pathname: `/post/${id}`,
+            // },
+            { shallow: true }
+        );
+    };
     return (
-        <MainLayout>
-            <CardList />
-            {/* <CardList postsArr={null} /> */}
-            {/* {postsData &&
-                postsData.length > 0 &&
-                postsData.map((str, i) => {
-                    return (
-                        <div key={i}>
-                            <p>{str}</p>
-                        </div>
-                    );
-                })} */}
-        </MainLayout>
+        <>
+            <MainLayout>
+                <CardList />
+
+                {/* <Modal visible={!!router.query.postId} onCancel={onModalClose}>
+                    {'aboba'}
+                </Modal> */}
+            </MainLayout>
+        </>
     );
 };
 

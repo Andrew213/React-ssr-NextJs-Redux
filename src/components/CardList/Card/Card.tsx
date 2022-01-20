@@ -18,12 +18,13 @@ import Typography from '@/lib/Typography/Typography';
 import CardContent from './CardContent/CardContent';
 
 import Link from 'next/link';
+import Modal from '@/lib/Modal/Modal';
 import styles from './styles.module.scss';
-import Modal from '@/lib/Modal/modal';
 
 interface CardProps extends PostType {
     onPostClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     isPostOpen?: boolean;
+    postInPopup?: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -35,6 +36,7 @@ const Card: React.FC<CardProps> = ({
     authorAvatar,
     commentsCount,
     score,
+    postInPopup = false,
     content_size,
     permalink,
     id,
@@ -83,35 +85,39 @@ const Card: React.FC<CardProps> = ({
         setActive(true);
     }, []);
 
-    const onTitleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        openModal();
-        // void router.push(
-        //     {
-        //         pathname: `/`,
-        //         query: { postId: `${id}` },
-        //     },
-        //     undefined,
-        //     // {
-        //     //     pathname: `/post/${id}`,
-        //     // },
-        //     { shallow: true }
-        // );
+    const onTitleClick = React.useCallback(
+        (e: React.MouseEvent<HTMLButtonElement>) => {
+            e.preventDefault();
 
-        // const query = new URLSearchParams();
-        // return query.get(name);
-        // console.log(`query`, query);
-        // console.log(`pathname`, router.query);
-    };
+            void router.push(
+                {
+                    pathname: `/`,
+                    query: { postId: `${id}` },
+                },
+                {
+                    pathname: `/post/${id}`,
+                },
+                { shallow: true }
+            );
+            if (!router.query.postId) {
+                setActive(true);
+            }
+        },
+        [id, router]
+    );
 
-    const closeModal = React.useCallback(() => {
+    const onModalClose = () => {
+        void router.push(
+            {
+                pathname: `/`,
+            },
+            undefined,
+            { shallow: true }
+        );
         setActive(false);
-    }, []);
+    };
     return (
         <>
-            <Modal visible={active} onCancel={closeModal}>
-                {'aboba'}
-            </Modal>
             <li className={styles.card}>
                 <div className={styles.card__header}>
                     <Karma className={styles.card__karma} score={score} />
@@ -144,9 +150,6 @@ const Card: React.FC<CardProps> = ({
                         </DropDown>
                         {/* {WIDTH_990 && <Karma className={styles.card__karma} score={score} />} */}
                     </div>
-                    {/* <Link href={`/?postId=${id}`} as={`/post/${id}`}>
-                        <p className={styles.card__title}>{title}</p>
-                    </Link> */}
                     <button onClick={onTitleClick} className={styles.card__titleBtn}>
                         <p className={styles.card__title}>{title}</p>
                     </button>
@@ -230,6 +233,19 @@ const Card: React.FC<CardProps> = ({
                     onClose={handleOnPostClose}
                 />
             </CSSTransition> */}
+            <Modal visible={active} onCancel={onModalClose} width={1000}>
+                <Card
+                    id={id}
+                    content={content}
+                    score={score}
+                    subredditName_display={subredditName_display}
+                    authorName={authorName}
+                    content_size={content_size}
+                    created={created}
+                    title={title}
+                    authorAvatar={authorAvatar}
+                />
+            </Modal>
         </>
     );
 };

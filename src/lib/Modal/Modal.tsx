@@ -66,13 +66,21 @@ const Modal: React.FC<ModalProps> = ({
         handleClose(e);
     };
 
+    React.useEffect(() => {
+        if (visible || active) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    }, [active, visible]);
+
     return (
         <>
             {(visible || active) && (
                 <Portal>
                     <div className={classNames} onTransitionEnd={transitionEnd} onClick={handleMaskClick}>
                         <div className={styles.modal__content} style={contentStyle} onClick={handleContentClick}>
-                            <h1>{children}</h1>
+                            {children}
                         </div>
                     </div>
                 </Portal>
