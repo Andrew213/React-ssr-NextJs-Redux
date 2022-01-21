@@ -1,0 +1,29 @@
+.commentsForm {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 50px;
+    border-bottom: 1px solid $grey-d9;
+    margin-top: 37px;
+    &__input {
+        font-family: 'Roboto', sans-serif;
+        border-radius: 3px 3px 0px 0px;
+        resize: none;
+        font-size: 16px;
+        height: 90px;
+        border: 1px solid $grey-d9;
+        padding: 16px;
+        &:focus {
+            border-color: black;
+        }
+    }
+
+    &__btn {
+        max-width: 220px;
+        align-self: flex-end;
+        padding: 17px 50px;
+        background-color: $orange;
+        font-weight: 500;
+        color: #fff;
+        border-radius: 0px 0px 3px 3px;
+    }
+}
