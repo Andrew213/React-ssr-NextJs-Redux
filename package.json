@@ -107,6 +107,7 @@
     "node-fetch": "^3.0.0",
     "nookies": "^2.5.2",
     "react": "^17.0.1",
+    "react-animate-height": "^2.0.23",
     "react-cookie": "^4.1.1",
     "react-dom": "^17.0.1",
     "react-loader-spinner": "^4.0.0",

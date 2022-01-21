@@ -23,7 +23,7 @@ const CardList: React.FC<CardListProps> = () => {
 
     React.useEffect(() => {
         // Принимает 3 параметра: 1-subreddit, 2-sortmod, 3-time
-        FetchPosts('world', 'top');
+        FetchPosts();
     }, []);
 
     // React.useEffect(() => {

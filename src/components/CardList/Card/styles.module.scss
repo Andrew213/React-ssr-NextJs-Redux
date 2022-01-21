@@ -11,7 +11,7 @@
     // z-index: 2;
 
     &__header {
-        position: relative;
+        // position: relative;
     }
 
     &__titleBtn {
@@ -37,7 +37,7 @@
 
     &__karma {
         position: absolute;
-        left: -58px;
+        left: 23px;
         & > span {
             color: $grey-99;
             cursor: default;
@@ -120,22 +120,26 @@
     padding: 50px 60px 37px 60px;
     box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.15);
     margin-bottom: 0;
-    // margin-left: -10px;
-    &__header {
+    overflow: auto;
+    &__inner {
         display: flex;
-        flex-direction: column;
+        flex-direction: column-reverse;
+    }
+
+    &__header {
+        margin-left: 50px;
     }
 
     &__karma {
-        left: 0px;
+        left: 50px;
+        top: 55px;
         & > span {
             color: #333;
         }
     }
 
     &__titleBtn {
-        order: 0;
-        margin-left: 35px;
+        margin-left: 50px;
         display: block;
     }
 
@@ -147,7 +151,6 @@
 
     &__userInfo {
         order: 1;
-        margin-left: 35px;
     }
 
     &__menuWrapper {

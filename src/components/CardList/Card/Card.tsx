@@ -3,9 +3,9 @@ import cn from 'classnames';
 import DropDown from '@/lib/DropDown/DropDown';
 import List from '@/lib/List/List';
 import Karma from './Karma/Karma';
+import { declOfNum } from '@/utils';
 import { useRouter } from 'next/router';
 import useWindowSize from '@/hooks/useWindowSize';
-import CardControlMobile from './CardControlMobile/CardControlMobile';
 import User_info from './User_info/User_info';
 import { dropDownList } from '@/utils/dropDownList';
 import Loader from 'react-loader-spinner';
@@ -14,14 +14,16 @@ import PostType from '@/interfaces/PostType';
 import { animateScroll as scroll } from 'react-scroll';
 import Typography from '@/lib/Typography/Typography';
 import CardContent from './CardContent/CardContent';
-
-import Link from 'next/link';
+import AnimateHeight from 'react-animate-height';
 import Modal from '@/lib/Modal/Modal';
+
 import styles from './styles.module.scss';
 
+const WORDS_FOR_DECLENSION = ['Комментарий', 'Комментария', 'Комментариев'];
 interface CardProps extends PostType {
     onPostClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     isPostOpen?: boolean;
+    As?: 'li' | 'div';
 }
 
 const Card: React.FC<CardProps> = ({
@@ -38,6 +40,7 @@ const Card: React.FC<CardProps> = ({
     permalink,
     id,
     content,
+    As = 'li',
     description,
 }) => {
     const { width, height } = useWindowSize();
@@ -50,8 +53,17 @@ const Card: React.FC<CardProps> = ({
 
     const titleRef = React.useRef(null);
 
-    const handlePostClick = React.useCallback(() => {
-        console.log(1);
+    const [active, setActive] = React.useState(false);
+
+    const switchCardMenu = (val: string) => {
+        switch (val) {
+            case 'Comments':
+                handleCommentsClick();
+        }
+    };
+
+    const handleCommentsClick = React.useCallback(() => {
+        console.log(id);
         // void router.replace('/example');
         // scroll.scrollTo(100);
         // void fetch(`/api/comments/getPostComments`, {
@@ -64,23 +76,6 @@ const Card: React.FC<CardProps> = ({
         //     .then(resp => resp.json())
         //     .then(commentsArr => dispatch(commentsFetchDataSuccess(commentsArr)));
         // setIsPostOpen(prev => !prev);
-    }, []);
-
-    const [active, setActive] = React.useState(false);
-
-    const handleOnPostClose = React.useCallback(() => {
-        setIsPostOpen(false);
-    }, []);
-
-    const switchCardMenu = (val: string) => {
-        switch (val) {
-            case 'Comments':
-                handlePostClick();
-        }
-    };
-
-    const openModal = React.useCallback(() => {
-        setActive(true);
     }, []);
 
     const onTitleClick = React.useCallback(
@@ -114,149 +109,93 @@ const Card: React.FC<CardProps> = ({
         );
         setActive(false);
     };
+
     return (
         <>
-            <li className={cn(styles.card, { [styles.cardInPopup]: postInPopup })}>
-                <div className={cn(styles.card__header, { [styles.cardInPopup__header]: postInPopup })}>
-                    <Karma
-                        className={cn(styles.card__karma, { [styles.cardInPopup__karma]: postInPopup })}
-                        score={score}
-                    />
-                    <User_info
-                        className={cn(styles.post__userInfo, { [styles.cardInPopup__userInfo]: postInPopup })}
-                        subreddit={subredditName_display}
-                        authorName={authorName}
-                        authorAva={authorAvatar}
-                        created={created}
-                    />
-                    <div className={cn(styles.card__menuWrapper, { [styles.cardInPopup__menuWrapper]: postInPopup })}>
-                        <DropDown
-                            trigger={
-                                <button className={styles.card__menu}>
-                                    <div className={styles.card__emptyArea} />
-                                </button>
-                            }
-                            triggerActive={styles.card__menuTrigger_active}
-                            className={styles.card__menuList}
+            <As className={cn(styles.card, { [styles.cardInPopup]: postInPopup })}>
+                <AnimateHeight height={'50%'}>
+                    <div className={cn(styles.card__inner, { [styles.cardInPopup__inner]: postInPopup })}>
+                        <div className={cn(styles.card__header, { [styles.cardInPopup__header]: postInPopup })}>
+                            <Karma
+                                className={cn(styles.card__karma, { [styles.cardInPopup__karma]: postInPopup })}
+                                score={score}
+                            />
+                            <User_info
+                                className={cn(styles.post__userInfo, { [styles.cardInPopup__userInfo]: postInPopup })}
+                                subreddit={subredditName_display}
+                                authorName={authorName}
+                                authorAva={authorAvatar}
+                                created={created}
+                            />
+                        </div>
+
+                        <div
+                            className={cn(styles.card__menuWrapper, { [styles.cardInPopup__menuWrapper]: postInPopup })}
                         >
-                            <List onChange={switchCardMenu}>
-                                {dropDownList.map(({ id, text, liIcon, As }) => {
-                                    return (
-                                        <List.Option key={id} value={id} liIcon={liIcon} className={styles.listItem}>
-                                            {text}
-                                        </List.Option>
-                                    );
-                                })}
-                            </List>
-                        </DropDown>
-                        {/* {WIDTH_990 && <Karma className={styles.card__karma} score={score} />} */}
+                            <DropDown
+                                trigger={
+                                    <button className={styles.card__menu}>
+                                        <div className={styles.card__emptyArea} />
+                                    </button>
+                                }
+                                triggerActive={styles.card__menuTrigger_active}
+                                className={styles.card__menuList}
+                            >
+                                <List onChange={switchCardMenu}>
+                                    {dropDownList.map(({ id, text, liIcon, As }) => {
+                                        return (
+                                            <List.Option
+                                                key={id}
+                                                value={id}
+                                                liIcon={liIcon}
+                                                className={styles.listItem}
+                                            >
+                                                {text}
+                                            </List.Option>
+                                        );
+                                    })}
+                                </List>
+                            </DropDown>
+                        </div>
+                        <button
+                            onClick={onTitleClick}
+                            className={cn(styles.card__titleBtn, { [styles.cardInPopup__titleBtn]: postInPopup })}
+                        >
+                            <p className={cn(styles.card__title, { [styles.cardInPopup__title]: postInPopup })}>
+                                {title}
+                            </p>
+                        </button>
                     </div>
-                    <button
-                        onClick={onTitleClick}
-                        className={cn(styles.card__titleBtn, { [styles.cardInPopup__titleBtn]: postInPopup })}
-                    >
-                        <p className={cn(styles.card__title, { [styles.cardInPopup__title]: postInPopup })}>{title}</p>
-                    </button>
+
                     {content.url && (
                         <div className={cn(styles.card__content, { [styles.cardInPopup__content]: postInPopup })}>
                             <CardContent content={content} content_size={content_size} />
                         </div>
                     )}
-                </div>
-                {postInPopup && (
-                    <div className={cn(styles.cardInPopup__controlWrapper)}>
-                        <List onChange={switchCardMenu} className={styles.cardInPopup__control}>
-                            {dropDownList.map(({ id, text, liIcon, As }, i) => {
-                                if (id === 'Close') delete dropDownList[i];
-
-                                return (
-                                    <List.Option
-                                        key={id}
-                                        value={id}
-                                        liIcon={liIcon}
-                                        className={styles.cardInPopup__listItem}
-                                    >
-                                        {text}
-                                    </List.Option>
-                                );
-                            })}
-                        </List>
-                    </div>
-                )}
-            </li>
-            {/* <li className={styles.card}>
-                {!WIDTH_990 && <CardControlMobile KarmaControl={Karma} />}
-                {thumbnail && (
-                    <div className={styles.card__imgWrapper}>
-                    <Image src={thumbnail} layout="fill" quality={50} className={styles.card__img} />
-                    </div>
+                    {postInPopup && (
+                        <div className={cn(styles.cardInPopup__controlWrapper)}>
+                            <List onChange={switchCardMenu} className={styles.cardInPopup__control}>
+                                {dropDownList.map(({ id, text, liIcon, As }, i) => {
+                                    if (id === 'Close') delete dropDownList[i];
+                                    if (id === 'Comments') {
+                                        text = `${commentsCount} ${declOfNum(commentsCount, WORDS_FOR_DECLENSION)}`;
+                                    }
+                                    return (
+                                        <List.Option
+                                            key={id}
+                                            value={id}
+                                            liIcon={liIcon}
+                                            className={styles.cardInPopup__listItem}
+                                        >
+                                            {text}
+                                        </List.Option>
+                                    );
+                                })}
+                            </List>
+                        </div>
                     )}
-                <div className={styles.card__info}>
-                <button onClick={handlePostClick} className={styles.card__titleBtn} ref={titleRef}>
-                        <h2 className={styles.card__title}>{title}</h2>
-                        </button>
-                        <User_info created={`${created}`} author={author} />
-                        <div className={styles.card__viewed}>
-                        <Icon component={viewed} />
-                        <p className={styles.card__viewedText}>1 час назад</p>
-                    </div>
-                    <div className={styles.card__menuWrapper}>
-                        <DropDown
-                            trigger={
-                                <button className={styles.card__menu}>
-                                    <div className={styles.card__emptyArea} />
-                                </button>
-                            }
-                            triggerActive={styles.card__menuTrigger_active}
-                            className={styles.card__menuList}
-                        >
-                            {dropDownList.map(({ id, text, liIcon, As }) => {
-                                return (
-                                    <List
-                                        id={id}
-                                        key={id}
-                                        As={As}
-                                        text={text}
-                                        className={styles.listItem}
-                                        liIcon={liIcon}
-                                    />
-                                );
-                            })}
-                        </DropDown>
-                        {WIDTH_990 && <Karma className={styles.card__karma} score={score} />}
-                    </div>
-                </div>
-            </li>
-            <CSSTransition
-                in={isPostOpen}
-                timeout={300}
-                classNames={{
-                    enter: styles.post_enter,
-                    enterActive: styles.post_enter_active,
-                    enterDone: styles.post_enter_done,
-                    exit: styles.post_exit,
-                    exitActive: styles.post_exit_active,
-                    exitDone: styles.post_exit_done,
-                }}
-                mountOnEnter
-                unmountOnExit
-            >
-                <Post
-                    triggerNode={titleRef}
-                    author={author}
-                    permalink={permalink}
-                    created={created}
-                    description={description}
-                    contentImg_Height={contentImg_Height}
-                    contentImg_Width={contentImg_Width}
-                    content={content}
-                    score={score}
-                    id={id}
-                    title={title}
-                    subreddit={subreddit}
-                    onClose={handleOnPostClose}
-                />
-            </CSSTransition> */}
+                </AnimateHeight>
+            </As>
 
             <Modal visible={active} onCancel={onModalClose} width={1000} className={styles.modal}>
                 <Card
@@ -268,8 +207,10 @@ const Card: React.FC<CardProps> = ({
                     content_size={content_size}
                     created={created}
                     title={title}
+                    commentsCount={commentsCount}
                     authorAvatar={authorAvatar}
                     postInPopup={true}
+                    As="div"
                 />
             </Modal>
         </>
