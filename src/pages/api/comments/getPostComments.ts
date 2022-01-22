@@ -2,44 +2,56 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import CommentType, { replyI } from '@/interfaces/Comment';
 import { getSession, session } from 'next-auth/client';
 import snoowConf from '@/utils/snow';
-import { Listing, Comment } from 'snoowrap';
+import Snoowrap, { Listing, Comment } from 'snoowrap';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const { query, body } = req;
 
     try {
         const session = await getSession({ req });
+        const access_token = req.cookies.token;
 
-        let r;
+        let r: Snoowrap | null = null;
 
-        if (session) {
-            r = snoowConf(session.accessToken as string, session.refreshToken as string);
-        }
-        const commArr: CommentType[] = [];
+        r = snoowConf(access_token);
 
-        const images: replyI[] = [];
+        const foo = await r.getSubmission('s9uyqx').comments.map(cm => cm.body);
+        console.log(foo);
 
-        let i = 0;
+        // if (session) {
+        //     r = snoowConf(session.accessToken as string, session.refreshToken as string);
+        // }
 
-        const getReplieImg = async (replieArr: Listing<Comment>) => {
-            await Promise.all(
-                await replieArr.map(async rep => {
-                    if (rep.author.name !== '[deleted]') {
-                        const repImg = await rep.author.icon_img;
-                        const replObj: replyI = {
-                            authorImg: repImg,
-                            author: rep.author.name,
-                        };
-                        images.push(replObj);
-                        i++;
-                        if (rep.replies.length > 0) {
-                            void getReplieImg(rep.replies);
-                        }
-                    }
-                })
-            );
-            return images;
-        };
+        // let r;
+
+        // if (session) {
+        //     r = snoowConf(session.accessToken as string, session.refreshToken as string);
+        // }
+        // const commArr: CommentType[] = [];
+
+        // const images: replyI[] = [];
+
+        // let i = 0;
+
+        // const getReplieImg = async (replieArr: Listing<Comment>) => {
+        //     await Promise.all(
+        //         await replieArr.map(async rep => {
+        //             if (rep.author.name !== '[deleted]') {
+        //                 const repImg = await rep.author.icon_img;
+        //                 const replObj: replyI = {
+        //                     authorImg: repImg,
+        //                     author: rep.author.name,
+        //                 };
+        //                 images.push(replObj);
+        //                 i++;
+        //                 if (rep.replies.length > 0) {
+        //                     void getReplieImg(rep.replies);
+        //                 }
+        //             }
+        //         })
+        //     );
+        //     return images;
+        // };
 
         // const transformReplies = async (replies: Listing<Comment>) => {
         //     const replyArr: CommentType[] = [];
@@ -84,9 +96,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         //     })
         // );
 
-        const comments = await r.getSubmission('qttqsy').comments.map(cm => cm.body);
+        // const comments = await r.getSubmission('qttqsy').comments.map(cm => cm.body);
 
-        res.status(200).send(JSON.stringify(comments));
+        // res.status(200).send(JSON.stringify(comments));
     } catch (err) {
         throw new Error(err);
     }

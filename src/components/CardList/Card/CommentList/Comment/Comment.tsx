@@ -1,7 +1,7 @@
 import React from 'react';
 import Typography from '@/lib/Typography/Typography';
-import Karma from '../../CardList/Card/Karma/Karma';
-import User_info from '../../CardList/Card/User_info/User_info';
+import Karma from '../../Karma/Karma';
+import User_info from '../../User_info/User_info';
 import share from '@img/icons/Desktop/share.svg';
 import report from '@img/icons/Desktop/report.svg';
 import comments from '@img/icons/comments.svg';
@@ -10,44 +10,50 @@ import List, { ListProps } from '@/lib/List/List';
 
 import styles from './styles.module.scss';
 
-const commentControl: ListProps[] = [
-    {
-        id: 'Answer',
-        text: 'Ответить',
-        liIcon: comments,
-        As: 'button',
-    },
-    {
-        id: 'Share',
-        text: 'Поделиться',
-        liIcon: share,
-        As: 'button',
-    },
-    {
-        id: 'Report',
-        text: 'Пожаловаться',
-        liIcon: report,
-        As: 'button',
-    },
-];
+// const commentControl: ListProps[] = [
+//     {
+//         id: 'Answer',
+//         text: 'Ответить',
+//         liIcon: comments,
+//         As: 'button',
+//     },
+//     {
+//         id: 'Share',
+//         text: 'Поделиться',
+//         liIcon: share,
+//         As: 'button',
+//     },
+//     {
+//         id: 'Report',
+//         text: 'Пожаловаться',
+//         liIcon: report,
+//         As: 'button',
+//     },
+// ];
 
 interface CommentProps extends CommentType {
     onChange?: (value: string, id: string) => void;
 }
-
-const Comment: React.FC<CommentProps> = ({ onChange, score, author, id, created, subreddit, body, replies }) => {
+// { onChange, score, authorName, authorAva, id, created, subreddit, body, replies }
+const Comment: React.FC<CommentProps> = ({ id }) => {
     return (
         <div className={styles.comment}>
             <div className={styles.comment__karmaWrapper}>
-                <Karma className={styles.comment__karma} score={score} />
+                {id}
+                {/* <Karma className={styles.comment__karma} score={score} />
                 <div className={styles.comment__separator} />
             </div>
             <div className={styles.comment__main}>
-                <User_info className={styles.comment__userInfo} subreddit={subreddit} author={author} />
+                <User_info
+                    className={styles.comment__userInfo}
+                    subreddit={subreddit}
+                    authorName={authorName}
+                    authorAva={authorAva}
+                />
                 <Typography As="p" className={styles.comment__text}>
                     {body}
-                </Typography>
-                <div className={styles.comment__control}>
+                </Typography> */}
+                {/* <div className={styles.comment__control}>
                     {commentControl.map(el => {
                         return (
                             <List
@@ -62,8 +68,8 @@ const Comment: React.FC<CommentProps> = ({ onChange, score, author, id, created,
                             />
                         );
                     })}
-                </div>
-                {replies.length > 0 &&
+                </div> */}
+                {/* {replies.length > 0 &&
                     replies.map((cm: CommentType) => {
                         if (cm.body !== undefined) {
                             return (
@@ -73,12 +79,13 @@ const Comment: React.FC<CommentProps> = ({ onChange, score, author, id, created,
                                     body={cm.body}
                                     score={cm.score}
                                     id={cm.id}
-                                    author={cm.author}
-                                    key={`${cm.id}${cm.author}`}
+                                    authorName={cm.authorName}
+                                    authorAva={cm.authorAva}
+                                    key={cm.id}
                                 />
                             );
                         }
-                    })}
+                    })} */}
             </div>
         </div>
     );

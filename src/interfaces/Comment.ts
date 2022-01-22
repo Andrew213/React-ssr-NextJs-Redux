@@ -1,6 +1,3 @@
-import { RedditUser } from 'snoowrap';
-import { authorT } from './PostType';
-
 export interface replyI {
     author: string;
     authorImg: string;
@@ -8,7 +5,8 @@ export interface replyI {
 }
 
 export default interface CommentType {
-    author?: authorT;
+    authorName?: string;
+    authorAva?: string;
     body?: string;
     id?: string;
     score?: number;

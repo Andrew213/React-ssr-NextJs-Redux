@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/client';
+import { serialize } from 'cookie';
 import snoowConf from '@/utils/snow';
 import Snoowrap, { Listing, Submission } from 'snoowrap';
 import { PostDisruction } from '@/utils/postTransform';
@@ -49,6 +50,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         });
 
         const json = await resp.json();
+
+        res.setHeader('Set-Cookie', serialize('token', json.access_token, { path: '/', sameSite: true, secure: true }));
 
         r = snoowConf(json.access_token as string);
 

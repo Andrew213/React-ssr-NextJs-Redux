@@ -7,7 +7,7 @@ import Image from 'next/image';
 import styles from './styles.module.scss';
 
 type User_infoProps = {
-    created: string | number;
+    created?: string | number;
     authorName: string;
     authorAva: string;
     className: string;

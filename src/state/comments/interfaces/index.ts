@@ -1,4 +1,4 @@
-import { CommentsActionType } from '../action-types';
+import { CommentsActionType } from '../actions/action-types';
 
 interface LoadCommentsAction {
     type: CommentsActionType.LOAD_COMMENTS;

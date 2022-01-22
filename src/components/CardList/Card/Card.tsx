@@ -46,7 +46,11 @@ const Card: React.FC<CardProps> = ({
 
     const [commentsHeight, setCommentsHeight] = React.useState<number | 'auto'>(0);
 
+    const [showComments, setShowComments] = React.useState<boolean>(false);
+
     const router = useRouter();
+
+    const postInPopupRef = React.useRef(false);
 
     const [isPostOpen, setIsPostOpen] = React.useState(false);
 
@@ -56,11 +60,29 @@ const Card: React.FC<CardProps> = ({
                 handleCommentsClick();
         }
     };
+    const onCommentsClick = () => {
+        if (!showComments || commentsHeight === 0) {
+            // setCommentsHeight(0);
+            // setShowComments(false);
+
+            setShowComments(true);
+            setTimeout(() => {
+                setCommentsHeight('auto');
+            }, 0);
+        } else {
+            setCommentsHeight(0);
+            // if (commentsHeight === 0) setShowComments(false);
+        }
+
+        // setTimeout(() => {
+        //     setCommentsHeight(prev => (prev > 0 || prev === 'auto' ? 0 : 'auto'));
+        // }, 10);
+    };
 
     const switchCardMenuInPopup = (val: string) => {
         switch (val) {
             case 'Comments':
-                setCommentsHeight(prev => (prev > 0 || prev === 'auto' ? 0 : 'auto'));
+                onCommentsClick();
         }
     };
 
@@ -109,7 +131,12 @@ const Card: React.FC<CardProps> = ({
             { shallow: true }
         );
         setIsPostOpen(false);
+        setShowComments(false);
     };
+
+    // React.useEffect(() => {
+    //     onModalClose();
+    // }, []);
 
     return (
         <>
@@ -185,14 +212,22 @@ const Card: React.FC<CardProps> = ({
                                 })}
                             </List>
                         </div>
-                        <AnimateHeight duration={300} height={commentsHeight}>
-                            <CommentsList id={id} author={authorName} />
-                        </AnimateHeight>
+                        {showComments && (
+                            <AnimateHeight duration={300} height={commentsHeight}>
+                                <CommentsList id={id} authorName={authorName} />
+                            </AnimateHeight>
+                        )}
                     </>
                 )}
             </As>
 
-            <Modal visible={isPostOpen} onCancel={onModalClose} width={1000} className={styles.modal}>
+            <Modal
+                visible={isPostOpen}
+                onCancel={onModalClose}
+                width={1000}
+                className={styles.modal}
+                ref={postInPopupRef}
+            >
                 <Card
                     id={id}
                     content={content}

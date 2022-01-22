@@ -1,5 +1,5 @@
 import { Submission } from 'snoowrap';
-import { PostsActionType } from '../action-types';
+import { PostsActionType } from '../actions/action-types';
 import { PostsAction } from '../interfaces';
 import { IdPostDict, PostsState } from '../PostState';
 

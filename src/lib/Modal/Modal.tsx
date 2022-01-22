@@ -5,6 +5,7 @@ import Portal from '../Portal/Portal';
 import styles from './styles.module.scss';
 
 export type ModalProps = {
+    children?: React.ReactNode;
     visible: boolean;
     className?: string;
     title?: string;
@@ -13,15 +14,10 @@ export type ModalProps = {
     maskClosable?: boolean;
 };
 
-const Modal: React.FC<ModalProps> = ({
-    visible,
-    className,
-    title,
-    onCancel,
-    maskClosable = true,
-    children,
-    width = 600,
-}) => {
+const Modal: React.ForwardRefRenderFunction<unknown, ModalProps> = (
+    { visible, className, title, onCancel, maskClosable = true, children, width = 600 },
+    ref
+) => {
     const [active, setActive] = React.useState(false);
 
     const classNames = cn(
@@ -89,4 +85,4 @@ const Modal: React.FC<ModalProps> = ({
     );
 };
 
-export default Modal;
+export default React.forwardRef<unknown, ModalProps>(Modal);
