@@ -16,7 +16,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         r = snoowConf(access_token);
 
         const foo = await r.getSubmission('s9uyqx').comments.map(cm => cm.body);
-        console.log(foo);
+        // console.log(foo);
 
         // if (session) {
         //     r = snoowConf(session.accessToken as string, session.refreshToken as string);

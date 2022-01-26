@@ -23,19 +23,8 @@ const CardList: React.FC<CardListProps> = () => {
 
     React.useEffect(() => {
         // Принимает 3 параметра: 1-subreddit, 2-sortmod, 3-time
-        FetchPosts();
+        FetchPosts('cryptocurrency');
     }, []);
-
-    // React.useEffect(() => {
-    //     void Router.push({
-    //         pathname: '/',
-    //         query: { keyword: 'this way', amogus: 'abobus' },
-    //     });
-
-    //     const query = new URLSearchParams();
-    //     // return query.get(name);
-    //     console.log(`query`, query);
-    // }, []);
 
     const { width, height } = useWindowSize();
 
@@ -53,9 +42,7 @@ const CardList: React.FC<CardListProps> = () => {
                 {posts &&
                     posts.posts.map(post => {
                         const { data, icon_img } = post;
-                        if (data.authorName === '-HDVinnie-') {
-                            console.log(post);
-                        }
+
                         return (
                             <Card
                                 authorName={data.authorName}

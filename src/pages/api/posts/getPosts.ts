@@ -1,108 +1,76 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/client';
-import { serialize } from 'cookie';
 import snoowConf from '@/utils/snow';
 import Snoowrap, { Listing, Submission } from 'snoowrap';
 import { PostDisruction } from '@/utils/postTransform';
 import { PostFetchedT } from '@/interfaces/PostType';
+import { SortedListingOptions } from 'snoowrap/dist/objects';
+
+type sortModeT = 'hot' | 'top' | 'new' | 'controversial' | 'rising';
+
+const getPosts = async (
+    sortMode: sortModeT,
+    time: SortedListingOptions['time'],
+    access_token: string,
+    refresh_token?: string,
+    subreddit?: string
+): Promise<PostFetchedT[]> => {
+    const postsWithIcon_img: PostFetchedT[] = [];
+    const snoo: Snoowrap | null = snoowConf(access_token, refresh_token);
+    let posts: Listing<Submission>;
+    const sub = subreddit ? subreddit : '';
+
+    switch (sortMode) {
+        case 'hot':
+            posts = await snoo.getHot(sub);
+            break;
+        case 'top':
+            posts = await snoo.getTop(sub, { time });
+            break;
+        case 'new':
+            posts = await snoo.getNew(sub);
+            break;
+        case 'controversial':
+            posts = await snoo.getControversial(sub, { time });
+            break;
+        case 'rising':
+            posts = await snoo.getRising(sub);
+            break;
+        default:
+            posts = await snoo.getHot(sub);
+    }
+    await Promise.all(
+        posts.map(async (post: Submission) => {
+            const newPost: PostFetchedT = {
+                data: PostDisruction(post),
+                icon_img: await snoo.getUser(post.author.name).icon_img,
+                originalPost: post,
+            };
+            postsWithIcon_img.push(newPost);
+        })
+    );
+    return postsWithIcon_img;
+};
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req });
 
-    const { body } = req;
+    const { body, cookies } = req;
 
     const { subreddit, sortMode, time } = body;
 
-    let r: Snoowrap | null = null;
-
-    const postsWithIcon_img: PostFetchedT[] = [];
+    let postsWithIcon_img: PostFetchedT[] = [];
 
     let posts: Listing<Submission>;
 
     if (session) {
-        r = snoowConf(session.accessToken as string, session.refreshToken as string);
-
-        const posts = await r.getHot('webdev');
-
-        await Promise.all(
-            posts.map(async (post: Submission) => {
-                const newPost: PostFetchedT = {
-                    data: PostDisruction(post),
-                    icon_img: await r.getUser(post.author.name).icon_img,
-                    originalPost: post,
-                };
-
-                postsWithIcon_img.push(newPost);
-            })
-        );
-
-        res.status(200).send(JSON.stringify(postsWithIcon_img));
+        const access_token = cookies.token_auth;
+        const refresh_token = cookies.refresh_token;
+        postsWithIcon_img = await getPosts(sortMode, time, access_token, refresh_token, subreddit);
     } else {
-        const basicAuth = Buffer.from(`${process.env.APP_ONLY_ID}:`).toString('base64');
-
-        const resp = await fetch('https://www.reddit.com/api/v1/access_token', {
-            method: 'POST',
-            headers: {
-                Authorization: `Basic ${basicAuth}`,
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `grant_type=https://oauth.reddit.com/grants/installed_client&device_id=DO_NOT_TRACK_THIS_DEVICE`,
-        });
-
-        const json = await resp.json();
-
-        res.setHeader('Set-Cookie', serialize('token', json.access_token, { path: '/', sameSite: true, secure: true }));
-
-        r = snoowConf(json.access_token as string);
-
-        // #########################################################
-        const sub = subreddit ? subreddit : '';
-
-        switch (sortMode) {
-            case 'hot':
-                posts = await r.getHot(sub);
-                break;
-            case 'top':
-                posts = await r.getTop(sub, { time });
-                break;
-            case 'new':
-                posts = await r.getNew(sub);
-                break;
-            case 'controversial':
-                posts = await r.getControversial(sub, { time });
-                break;
-            case 'rising':
-                posts = await r.getRising(sub);
-                break;
-            default:
-                posts = await r.getHot(sub);
-        }
-
-        await Promise.all(
-            posts.map(async (post: Submission) => {
-                const newPost: PostFetchedT = {
-                    data: PostDisruction(post),
-                    icon_img: await r.getUser(post.author.name).icon_img,
-                    originalPost: post,
-                };
-
-                postsWithIcon_img.push(newPost);
-            })
-        );
-
-        res.status(200).send(postsWithIcon_img);
+        const access_token = cookies.token_appOnly;
+        postsWithIcon_img = await getPosts(sortMode, time, access_token, subreddit);
     }
+    res.status(200).send(postsWithIcon_img);
     res.end();
 };
-
-// void Snoowrap.fromApplicationOnlyAuth({
-//     userAgent: 'My app',
-//     clientId: 'Tmkg5W551ffqPxozPiiY-Q',
-//     deviceId: 'DO_NOT_TRACK_THIS_DEVICE',
-//     grantType: 'https://oauth.reddit.com/grants/installed_client',
-// }).then(r => {
-//     // Now we have a requester that can access reddit through a "user-less" Auth token
-//     return r.getHot().then(posts => {
-//         // do something with posts from the front page
-//     });
-// });

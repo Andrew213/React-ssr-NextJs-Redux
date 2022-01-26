@@ -5,7 +5,8 @@ import Chevron from '@img/icons/Desktop/chevron.svg';
 import Rocket from '@img/icons/Desktop/rocket.svg';
 import Mail from '@img/icons/Desktop/mail.svg';
 import Anonim from '@img/icons/Desktop/anonim.svg';
-import { useSession, signOut, session, signin } from 'next-auth/client';
+import { useSession, signOut, session, signIn } from 'next-auth/client';
+import useActions from '@/hooks/useActions';
 import Typography from '@/lib/Typography/Typography';
 import Icon from '@/lib/Icon/Icon';
 
@@ -15,12 +16,26 @@ type HeaderProps = {
     className?: string;
 };
 
-// const ss = `https://www.reddit.com/api/v1/authorize?client_id=${process.env.CLIENT_ID}&response_type=code&state=random_string&redirect_uri=${process.env.REDIRECT_URI}&duration=permanent&scope=read submit identity`;
-
 const Header: React.FC<HeaderProps> = ({ className }) => {
     const [session, load] = useSession();
 
+    const { GetAppOnly } = useActions();
+
+    React.useEffect(() => {
+        if (!session) {
+            GetAppOnly();
+        }
+    }, [GetAppOnly, session]);
+
     const userAvatar = session?.user?.image.split('?')[0];
+
+    const toggleAuth = () => {
+        if (session) {
+            void signOut();
+        } else {
+            void signIn('reddit', { redirect: false });
+        }
+    };
 
     return (
         <>
@@ -56,45 +71,18 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                         <Icon component={Mail} width={20} height={16} className={styles.header__mailIcon} />
                     </button>
                     <input placeholder="Поиск" className={styles.header__search} type="search" />
-                    {session ? (
-                        <>
-                            <button className={styles.header__profileLink} onClick={() => signOut()}>
-                                <img src={userAvatar} className={styles.header__avatar} />
-                            </button>
-                            <button className={styles.header__nickNameLink} onClick={() => signOut()}>
-                                <Typography As="p" size={20} className={styles.header__nickName}>
-                                    {session.user.name ? session.user.name : 'Аноним'}
-                                </Typography>
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            <button className={styles.header__profileLink} onClick={() => signin('reddit')}>
-                                <Icon component={Anonim} className={styles.header__avatar} />
-                            </button>
-                            <button className={styles.header__nickNameLink} onClick={() => signin('reddit')}>
-                                <Typography As="p" size={20} className={styles.header__nickName}>
-                                    {'Войти'}
-                                </Typography>
-                            </button>
-                        </>
-                    )}
-                    {/* <Link href={`#`}>
-                        <a className={styles.header__profileLink}>
-                            {user.avatar ? (
-                                <img src={data.iconImg} className={styles.header__avatar} />
-                            ) : (
-                                <Icon component={Anonim} className={styles.header__avatar} />
-                            )}
-                        </a>
-                    </Link>
-                    <Link href={`#`}>
-                        <a className={styles.header__nickNameLink}>
-                            <Typography As="p" size={20} className={styles.header__nickName}>
-                                {data.name ? data.name : 'Аноним'}
-                            </Typography>
-                        </a>
-                    </Link> */}
+                    <button className={styles.header__profileLink} onClick={toggleAuth}>
+                        {session ? (
+                            <img src={userAvatar} className={styles.header__avatar} />
+                        ) : (
+                            <Icon component={Anonim} className={styles.header__avatar} />
+                        )}
+                    </button>
+                    <button className={styles.header__nickNameLink} onClick={toggleAuth}>
+                        <Typography As="p" size={20} className={styles.header__nickName}>
+                            {session && session.user.name ? session.user.name : 'Войти'}
+                        </Typography>
+                    </button>
                 </div>
             </header>
         </>

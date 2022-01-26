@@ -1,7 +1,7 @@
-import { setCookie } from 'nookies';
-import Cookies from 'cookies';
 import { NextApiRequest, NextApiResponse } from 'next';
+import Cookies from 'cookies';
 import NextAuth from 'next-auth';
+import Providers from 'next-auth/providers';
 
 type setRefreshTokenArgs = {
     cookies: Cookies;
@@ -14,10 +14,9 @@ const setRefreshCookie = ({ cookies, refresh_token }: setRefreshTokenArgs) => {
     const expireTime = time + 24 * 60 * 80 * 1000 * 30; //30 days
     date.setTime(expireTime);
 
-    cookies.set('refresh_token', refresh_token, {
+    cookies.set(`refresh_token`, refresh_token, {
         sameSite: 'strict',
         overwrite: true,
-        // domain: 'http://localhost:8080/#_',
         expires: date,
         httpOnly: true,
     });
@@ -25,9 +24,11 @@ const setRefreshCookie = ({ cookies, refresh_token }: setRefreshTokenArgs) => {
 
 const Auth = (req: NextApiRequest, res: NextApiResponse) => {
     const cookies = new Cookies(req, res);
+    const basicAuth = Buffer.from(`${process.env.APP_ONLY_ID}:`).toString('base64');
+
     return NextAuth(req, res, {
         providers: [
-            {
+            Providers.Reddit({
                 id: 'reddit',
                 name: 'Reddit',
                 clientId: process.env.CLIENT_ID,
@@ -46,8 +47,11 @@ const Auth = (req: NextApiRequest, res: NextApiResponse) => {
                         image: profile.icon_img as string,
                     };
                 },
-            },
+            }),
         ],
+        pages: {
+            error: `/`,
+        },
         callbacks: {
             // eslint-disable-next-line @typescript-eslint/require-await
             async session(session, token) {
@@ -61,7 +65,7 @@ const Auth = (req: NextApiRequest, res: NextApiResponse) => {
                     token.accessToken = account.access_token;
                     token.refreshToken = account.refresh_token;
                     setRefreshCookie({ cookies, refresh_token: account.refresh_token });
-                    cookies.set('access_token', account.access_token, {
+                    cookies.set('token_auth', account.access_token, {
                         sameSite: 'strict',
                         overwrite: true,
                         expires: account.accessTokenExpires,
@@ -71,6 +75,7 @@ const Auth = (req: NextApiRequest, res: NextApiResponse) => {
                 return token;
             },
         },
+        // debug: true,
     });
 };
 
