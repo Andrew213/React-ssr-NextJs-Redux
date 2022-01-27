@@ -1,13 +1,12 @@
-import { Dispatch } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 import { CommentsActionType } from './action-types';
 import { CommentsAction } from '../interfaces';
+import { receiveComments, requestComments, fetchCommentsError } from '../actions/action-creators';
+import { CommentsState } from '../CommentsState';
 
 export const fetchComments = (id?: string) => {
-    const { LOAD_COMMENTS_SUCCESS, LOAD_COMMENTS, LOAD_COMMENTS_ERROR } = CommentsActionType;
-    return async (dispatch: Dispatch<CommentsAction>) => {
-        dispatch({
-            type: LOAD_COMMENTS,
-        });
+    return async (dispatch: ThunkDispatch<CommentsState, void, CommentsAction>) => {
+        dispatch(requestComments());
 
         try {
             const res = await fetch('/api/comments/getPostComments', {
@@ -15,18 +14,16 @@ export const fetchComments = (id?: string) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ id }),
+                body: JSON.stringify({ postId: id }),
             });
-            // const comments = await res.json();
-            // dispatch({
-            //     type: LOAD_COMMENTS_SUCCESS,
-            //     payload: comments,
-            // });
+            const comments = await res.json();
+            console.log(`comments `, 123);
+            // dispatch(receiveComments())
         } catch (err) {
-            dispatch({
-                type: LOAD_COMMENTS_ERROR,
-                payload: `err ${err}`,
-            });
+            // dispatch({
+            //     type: LOAD_COMMENTS_ERROR,
+            //     payload: `err ${err}`,
+            // });
         }
     };
 };

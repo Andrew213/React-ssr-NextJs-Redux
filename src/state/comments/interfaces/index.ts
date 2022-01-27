@@ -1,17 +1,17 @@
 import { CommentsActionType } from '../actions/action-types';
 
-interface LoadCommentsAction {
-    type: CommentsActionType.LOAD_COMMENTS;
+export interface requestCommentsI {
+    type: CommentsActionType.REQUEST_COMMENTS;
 }
 
-interface LoadCommentsSuccessAction {
-    type: CommentsActionType.LOAD_COMMENTS_SUCCESS;
-    payload: any[];
+export interface recieveCommentsI {
+    type: CommentsActionType.RECIEVE_COMMENTS;
+    comments: any[];
 }
 
-interface LoadCommentsErrorAction {
-    type: CommentsActionType.LOAD_COMMENTS_ERROR;
-    payload: string | null;
+export interface fetchCommentsErrorI {
+    type: CommentsActionType.FETCH_COMMENTS_ERROR;
+    errMsg: string;
 }
 
-export type CommentsAction = LoadCommentsAction | LoadCommentsErrorAction | LoadCommentsSuccessAction;
+export type CommentsAction = requestCommentsI | recieveCommentsI | fetchCommentsErrorI;

@@ -10,10 +10,8 @@ import User_info from './User_info/User_info';
 import { dropDownList } from '@/utils/dropDownList';
 import CommentsList from './CommentList/CommentList';
 import Loader from 'react-loader-spinner';
-import Post from '@/components/Post/Post';
 import PostType from '@/interfaces/PostType';
 import { animateScroll as scroll } from 'react-scroll';
-import Typography from '@/lib/Typography/Typography';
 import CardContent from './CardContent/CardContent';
 import AnimateHeight from 'react-animate-height';
 import Modal from '@/lib/Modal/Modal';
@@ -54,29 +52,21 @@ const Card: React.FC<CardProps> = ({
 
     const [isPostOpen, setIsPostOpen] = React.useState(false);
 
-    const switchCardMenu = (val: string) => {
-        switch (val) {
-            case 'Comments':
-                handleCommentsClick();
-        }
-    };
+    // const switchCardMenu = (val: string) => {
+    //     switch (val) {
+    //         case 'Comments':
+    //             handleCommentsClick();
+    //     }
+    // };
     const onCommentsClick = () => {
         if (!showComments || commentsHeight === 0) {
-            // setCommentsHeight(0);
-            // setShowComments(false);
-
             setShowComments(true);
             setTimeout(() => {
                 setCommentsHeight('auto');
             }, 0);
         } else {
             setCommentsHeight(0);
-            // if (commentsHeight === 0) setShowComments(false);
         }
-
-        // setTimeout(() => {
-        //     setCommentsHeight(prev => (prev > 0 || prev === 'auto' ? 0 : 'auto'));
-        // }, 10);
     };
 
     const switchCardMenuInPopup = (val: string) => {
@@ -85,21 +75,6 @@ const Card: React.FC<CardProps> = ({
                 onCommentsClick();
         }
     };
-
-    const handleCommentsClick = React.useCallback(() => {
-        // void router.replace('/example');
-        // scroll.scrollTo(100);
-        // void fetch(`/api/comments/getPostComments`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({ commentsCount: 4, postId: id, repliesCount: 2 }),
-        // })
-        //     .then(resp => resp.json())
-        //     .then(commentsArr => dispatch(commentsFetchDataSuccess(commentsArr)));
-        // setIsPostOpen(prev => !prev);
-    }, []);
 
     const onTitleClick = React.useCallback(
         (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -134,10 +109,6 @@ const Card: React.FC<CardProps> = ({
         setShowComments(false);
     };
 
-    // React.useEffect(() => {
-    //     onModalClose();
-    // }, []);
-
     return (
         <>
             <As className={cn(styles.card, { [styles.cardInPopup]: postInPopup })}>
@@ -166,7 +137,7 @@ const Card: React.FC<CardProps> = ({
                             triggerActive={styles.card__menuTrigger_active}
                             className={styles.card__menuList}
                         >
-                            <List onChange={switchCardMenu}>
+                            <List>
                                 {dropDownList.map(({ id, text, liIcon, As }) => {
                                     return (
                                         <List.Option key={id} value={id} liIcon={liIcon} className={styles.listItem}>

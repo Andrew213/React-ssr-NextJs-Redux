@@ -41,11 +41,11 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
         <>
             <header className={cn(className, styles.header)}>
                 <Typography As="h1" className={styles.visuallyHidden}>
-                    Самый лучший блог
+                    Ræbbit blog
                 </Typography>
                 <div className={styles.header__left}>
                     <Typography As="h2" size={28} mobileSize={20} className={styles.header__title}>
-                        Личный кабинет
+                        Ræbbit
                     </Typography>
                     <div className={styles.header__dropDownWrapper}>
                         <DropDown

@@ -4,18 +4,48 @@ import { getSession, session } from 'next-auth/client';
 import snoowConf from '@/utils/snow';
 import Snoowrap, { Listing, Comment } from 'snoowrap';
 
+const commentDestruction = async (cm: Comment): Promise<CommentType> => {
+    const comment: CommentType = {
+        authorAva: await cm.author.icon_img,
+        authorName: cm.author.name,
+        id: cm.id,
+        body: cm.body,
+        score: cm.score,
+        created: cm.created,
+        // replies: cm.replies.map(async cmt => {
+        //     return await commentDestruction(cmt);
+        // }),
+    };
+
+    return comment;
+};
+
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const { query, body } = req;
 
     try {
         const session = await getSession({ req });
-        const access_token = req.cookies.token;
+        const access_token = req.cookies.token_appOnly;
+        const commArr: CommentType[] = [];
+        const images: replyI[] = [];
 
-        let r: Snoowrap | null = null;
+        const r: Snoowrap | null = snoowConf(access_token);
 
-        r = snoowConf(access_token);
+        // const getReplyImg = async (replieArr: Listing<Comment>) => {
+        //     await Promise.all(
+        //         await replieArr.map(async rep => {
+        //             if (rep.author.name !== '[deleted]') {
+        //                 const repImg = await rep.author.icon_img;
+        //                 const replObj: replyI = {
+        //                     authorImg: repImg,
+        //                     author: rep.author.name,
+        //                 };
+        //                 images.push(replObj);
+        //             }
+        //         })
+        //     );
+        // };
 
-        const foo = await r.getSubmission('s9uyqx').comments.map(cm => cm.body);
         // console.log(foo);
 
         // if (session) {
@@ -75,6 +105,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         //     );
         //     return replyArr;
         // };
+
+        await r.getSubmission(body.postId).comments.filter(async (cmt, i) => {
+            if (cmt.author.name !== '[deleted]') {
+                const newComm = await commentDestruction(cmt);
+                commArr.push(newComm);
+            }
+        });
+
+        console.log(commArr);
 
         // await Promise.all(
         //     await r.getSubmission(body.postId).comments.filter(async (cmt, i) => {

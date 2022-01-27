@@ -61,8 +61,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     let postsWithIcon_img: PostFetchedT[] = [];
 
-    let posts: Listing<Submission>;
-
     if (session) {
         const access_token = cookies.token_auth;
         const refresh_token = cookies.refresh_token;
