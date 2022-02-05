@@ -1,6 +1,5 @@
-import { AuthActionType } from '../actions/action-types';
+import { AuthActionsTypes, AuthActionType } from '../actions/action-creators';
 import { AuthState } from '../AuthState';
-import { AuthAction } from '../interfaces';
 
 const defaultState: AuthState = {
     isAppOnly: true,
@@ -10,19 +9,19 @@ const defaultState: AuthState = {
     errorMessage: '',
 };
 
-const auth = (state: AuthState = defaultState, action: AuthAction): AuthState => {
+const auth = (state: AuthState = defaultState, action: AuthActionType): AuthState => {
     switch (action.type) {
-        case AuthActionType.REQUEST_AUTH:
+        case AuthActionsTypes.REQUEST_AUTH:
             return {
                 ...state,
             };
-        case AuthActionType.RECEIVE_AUTH:
+        case AuthActionsTypes.RECEIVE_AUTH:
             return {
                 ...state,
                 isAppOnly: action.isAppOnly,
                 authToken: action.authToken,
             };
-        case AuthActionType.AUTH_ERROR:
+        case AuthActionsTypes.AUTH_ERROR:
             return {
                 ...state,
                 error: true,

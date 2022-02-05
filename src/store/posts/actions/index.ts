@@ -1,9 +1,10 @@
-import { PostsTimes } from '../interfaces';
 import { PostsSortMode, PostsState } from '../PostState';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { RootState } from '@/state';
-import { fetchPostError, receivePosts, requestPosts } from './action-creators';
+import { RootState } from '@/store';
+import { PostsActions, PostsTimes } from './action-creators';
+
+const { requestPosts, receivePosts, PostsError } = PostsActions;
 
 export const fetchPosts = (subreddit?: string, sortMode: PostsSortMode = 'best', time: PostsTimes = 'month') => {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -22,7 +23,7 @@ export const fetchPosts = (subreddit?: string, sortMode: PostsSortMode = 'best',
             dispatch(receivePosts(subreddit, posts));
         } catch (err) {
             console.log(err);
-            dispatch(fetchPostError(subreddit));
+            dispatch(PostsError(subreddit, err));
         }
     };
 };
