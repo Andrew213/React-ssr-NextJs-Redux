@@ -1,16 +1,13 @@
-import { Submission } from 'snoowrap';
 import { PostActionType, PostsActionsTypes } from '../actions/action-creators';
-import { IdPostDict, PostsState } from '../PostState';
+import { PostsState } from '../PostState';
 
 const defaultState: PostsState = {
     posts: [],
     isLoading: true,
     byId: {},
     error: false,
-    // bySubreddit: {},
+    after: '',
 };
-
-// const postsInSubreddit = (state: Pos) => {};
 
 const posts = (state: PostsState = defaultState, action: PostActionType): PostsState => {
     switch (action.type) {
@@ -24,7 +21,6 @@ const posts = (state: PostsState = defaultState, action: PostActionType): PostsS
                 ...state,
                 posts: action.posts,
                 isLoading: false,
-                // byId: combineWithNewPost(state.byId, action.posts)
             };
         case PostsActionsTypes.FETCH_POST_ERROR:
             return { ...state, isLoading: false, error: true };

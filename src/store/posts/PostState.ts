@@ -1,6 +1,5 @@
 import { PostFetchedT } from '@/interfaces/PostType';
 import { Submission, Listing } from 'snoowrap';
-import { PostsTimes } from './interfaces';
 
 export type PostsSortMode = 'best' | 'hot' | 'top' | 'controversial' | 'new' | 'rising' | '';
 
@@ -26,6 +25,7 @@ export type PostsState = {
     byId: IdPostDict;
     isLoading: boolean;
     error: boolean;
+    after: string;
     // bySubreddit: {
     //     [key: string]: PostsInSubState;
     // };

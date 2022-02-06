@@ -1,13 +1,10 @@
 import React from 'react';
 import Loader from 'react-loader-spinner';
-import { declOfNum, formatUnixDate } from '@/utils';
 import PostType from '@/interfaces/PostType';
 import { useSession } from 'next-auth/client';
-import useWindowSize from '@/hooks/useWindowSize';
 import useActions from '@/hooks/useActions';
 import Card from './Card/Card';
 import { useTypedSelector } from '@/hooks/useTapedSelector';
-import Router, { useRouter } from 'next/router';
 
 import styles from './styles.module.scss';
 
@@ -18,15 +15,38 @@ type CardListProps = {
 const CardList: React.FC<CardListProps> = () => {
     const [session, load] = useSession();
     const { FetchPosts } = useActions();
-    const router = useRouter();
+    // const router = useRouter();
     const { posts } = useTypedSelector(state => state);
 
+    // TO-DO: УБРАТЬ ВСЕ ИЗ ЗАВИСИМОСТЕЙ, ПРОВЕРИТЬ НА ПЕРВУЮ ЗАГРУЗКУ ПОСТОВ БЕЗ ТОКЕНА
     React.useEffect(() => {
         // Принимает 3 параметра: 1-subreddit, 2-sortmod, 3-time
+
         FetchPosts('cryptocurrency');
     }, []);
 
-    const { width, height } = useWindowSize();
+    const bottomOfListRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        const observer = new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting) {
+                    console.log('load more');
+                }
+            },
+            { rootMargin: '1000px' }
+        );
+
+        if (bottomOfListRef.current) {
+            observer.observe(bottomOfListRef.current);
+        }
+
+        return () => {
+            if (bottomOfListRef.current) {
+                observer.unobserve(bottomOfListRef.current);
+            }
+        };
+    }, [bottomOfListRef.current]);
 
     if (posts.isLoading) {
         return (
@@ -61,6 +81,7 @@ const CardList: React.FC<CardListProps> = () => {
                         );
                     })}
             </ul>
+            <div ref={bottomOfListRef} />
         </>
     );
 };

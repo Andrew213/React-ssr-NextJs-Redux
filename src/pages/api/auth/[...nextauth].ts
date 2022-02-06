@@ -8,19 +8,19 @@ type setRefreshTokenArgs = {
     refresh_token: string;
 };
 
-const setRefreshCookie = ({ cookies, refresh_token }: setRefreshTokenArgs) => {
-    const date = new Date();
-    const time = date.getTime();
-    const expireTime = time + 24 * 60 * 80 * 1000 * 30; //30 days
-    date.setTime(expireTime);
+// const setRefreshCookie = ({ cookies, refresh_token }: setRefreshTokenArgs) => {
+//     const date = new Date();
+//     const time = date.getTime();
+//     const expireTime = time + 24 * 60 * 80 * 1000 * 30; //30 days
+//     date.setTime(expireTime);
 
-    cookies.set(`refresh_token`, refresh_token, {
-        sameSite: 'strict',
-        overwrite: true,
-        expires: date,
-        httpOnly: true,
-    });
-};
+//     cookies.set(`refresh_token`, refresh_token, {
+//         sameSite: 'strict',
+//         overwrite: true,
+//         expires: date,
+//         httpOnly: true,
+//     });
+// };
 
 const Auth = (req: NextApiRequest, res: NextApiResponse) => {
     const cookies = new Cookies(req, res);
@@ -64,13 +64,13 @@ const Auth = (req: NextApiRequest, res: NextApiResponse) => {
                 if (account && user) {
                     token.accessToken = account.access_token;
                     token.refreshToken = account.refresh_token;
-                    setRefreshCookie({ cookies, refresh_token: account.refresh_token });
-                    cookies.set('token_auth', account.access_token, {
-                        sameSite: 'strict',
-                        overwrite: true,
-                        expires: account.accessTokenExpires,
-                        httpOnly: true,
-                    });
+                    // setRefreshCookie({ cookies, refresh_token: account.refresh_token });
+                    // cookies.set('token_auth', account.access_token, {
+                    //     sameSite: 'strict',
+                    //     overwrite: true,
+                    //     expires: account.accessTokenExpires,
+                    //     httpOnly: true,
+                    // });
                 }
                 return token;
             },

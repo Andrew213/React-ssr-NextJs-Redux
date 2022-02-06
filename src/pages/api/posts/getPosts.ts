@@ -62,11 +62,25 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     let postsWithIcon_img: PostFetchedT[] = [];
 
     if (session) {
-        const access_token = cookies.token_auth;
-        const refresh_token = cookies.refresh_token;
-        postsWithIcon_img = await getPosts(sortMode, time, access_token, refresh_token, subreddit);
+        const access_token = session.accessToken;
+        const refresh_token = session.refreshToken;
+        postsWithIcon_img = await getPosts(sortMode, time, access_token as string, refresh_token as string, subreddit);
     } else {
-        const access_token = cookies.token_appOnly;
+        const basicAuth = Buffer.from(`${process.env.APP_ONLY_ID}:`).toString('base64');
+
+        const resp = await fetch('https://www.reddit.com/api/v1/access_token', {
+            method: 'POST',
+            headers: {
+                Authorization: `Basic ${basicAuth}`,
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `grant_type=https://oauth.reddit.com/grants/installed_client&device_id=DO_NOT_TRACK_THIS_DEVICE`,
+        });
+
+        const { access_token } = await resp.json();
+
+        // const access_token = cookies.token_appOnly;
+        console.log(`cookies `, cookies);
         postsWithIcon_img = await getPosts(sortMode, time, access_token, subreddit);
     }
     res.status(200).send(postsWithIcon_img);

@@ -5,8 +5,7 @@ import Chevron from '@img/icons/Desktop/chevron.svg';
 import Rocket from '@img/icons/Desktop/rocket.svg';
 import Mail from '@img/icons/Desktop/mail.svg';
 import Anonim from '@img/icons/Desktop/anonim.svg';
-import { useSession, signOut, session, signIn } from 'next-auth/client';
-import useActions from '@/hooks/useActions';
+import { useSession, signOut, signIn } from 'next-auth/client';
 import Typography from '@/lib/Typography/Typography';
 import Icon from '@/lib/Icon/Icon';
 
@@ -17,15 +16,7 @@ type HeaderProps = {
 };
 
 const Header: React.FC<HeaderProps> = ({ className }) => {
-    const [session, load] = useSession();
-
-    const { GetAppOnly } = useActions();
-
-    React.useEffect(() => {
-        if (!session) {
-            GetAppOnly();
-        }
-    }, [GetAppOnly, session]);
+    const [session] = useSession();
 
     const userAvatar = session?.user?.image.split('?')[0];
 
