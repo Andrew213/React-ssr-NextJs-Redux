@@ -7,7 +7,6 @@ import { PostsActions, PostsTimes } from './action-creators';
 const { requestPosts, receivePosts, PostsError } = PostsActions;
 
 export const fetchPosts = (subreddit?: string, sortMode: PostsSortMode = 'best', time: PostsTimes = 'month') => {
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     return async (dispatch: ThunkDispatch<PostsState, void, Action>, getState: () => RootState) => {
         dispatch(requestPosts(subreddit, sortMode, time));
 
@@ -19,11 +18,22 @@ export const fetchPosts = (subreddit?: string, sortMode: PostsSortMode = 'best',
                 },
                 body: JSON.stringify({ subreddit, sortMode, time }),
             });
-            const posts = await res.json();
-            dispatch(receivePosts(subreddit, posts));
+            const { destructuredPosts, originalListing } = await res.json();
+            // console.log(123);
+            await dispatch(receivePosts(subreddit, destructuredPosts, originalListing));
         } catch (err) {
             console.log(err);
             dispatch(PostsError(subreddit, err));
         }
+    };
+};
+
+export const fetchMorePosts = (subreddit?: string, sortMode: PostsSortMode = 'best', time: PostsTimes = 'month') => {
+    return async (dispatch: ThunkDispatch<PostsState, void, Action>, getState: () => RootState) => {
+        // dispatch(requestPosts(subreddit, sortMode, time));
+
+        const prevPosts = getState().posts.originalListing;
+
+        console.log(`prevPosts `, prevPosts);
     };
 };

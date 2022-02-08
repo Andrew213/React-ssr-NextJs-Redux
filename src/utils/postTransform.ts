@@ -12,7 +12,7 @@ export function splitUrl(url: string): string[] {
     return [domain, `/${rest.join('/')}`];
 }
 
-export const PostDisruction = (post: Submission): PostType => {
+export const PostDestruction = (post: Submission): PostType => {
     const isHidden = post.spoiler || post.over_18;
 
     const newPost: PostType = {

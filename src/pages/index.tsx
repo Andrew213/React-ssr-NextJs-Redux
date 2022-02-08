@@ -3,8 +3,14 @@ import CardList from '@/components/CardList/CardList';
 import MainLayout from '@/components/MainLayout/MainLayout';
 
 import { NextPage } from 'next';
+import useActions from '@/hooks/useActions';
 
 const Index: NextPage = () => {
+    const { FetchAuth } = useActions();
+
+    React.useEffect(() => {
+        FetchAuth();
+    }, []);
     return (
         <>
             <MainLayout>

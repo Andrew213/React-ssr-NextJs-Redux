@@ -1,6 +1,7 @@
 import { PostsSortMode } from '../../PostState';
 import { PostFetchedT } from '@/interfaces/PostType';
 import { ActionReturnType } from '@/utils/ActionReturnType';
+import { Listing, Submission } from 'snoowrap';
 
 export type PostsTimes = 'all' | 'hour' | 'day' | 'week' | 'month' | 'year';
 
@@ -20,11 +21,12 @@ export const PostsActions = {
             time,
         } as const),
 
-    receivePosts: (subreddit: string, posts: PostFetchedT[]) =>
+    receivePosts: (subreddit: string, posts: PostFetchedT[], originalListing: Listing<Submission>) =>
         ({
             type: PostsActionsTypes.RECEIVE_POSTS,
             subreddit,
             posts,
+            originalListing,
             receivedAt: Date.now(),
         } as const),
 

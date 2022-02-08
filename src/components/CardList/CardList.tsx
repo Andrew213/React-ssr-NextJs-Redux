@@ -1,7 +1,6 @@
 import React from 'react';
 import Loader from 'react-loader-spinner';
 import PostType from '@/interfaces/PostType';
-import { useSession } from 'next-auth/client';
 import useActions from '@/hooks/useActions';
 import Card from './Card/Card';
 import { useTypedSelector } from '@/hooks/useTapedSelector';
@@ -13,17 +12,18 @@ type CardListProps = {
 };
 
 const CardList: React.FC<CardListProps> = () => {
-    const [session, load] = useSession();
-    const { FetchPosts } = useActions();
-    // const router = useRouter();
-    const { posts } = useTypedSelector(state => state);
+    const { FetchPosts, FetchMorePosts } = useActions();
+    const {
+        posts: { after, isLoading, posts },
+        auth,
+    } = useTypedSelector(state => state);
 
-    // TO-DO: УБРАТЬ ВСЕ ИЗ ЗАВИСИМОСТЕЙ, ПРОВЕРИТЬ НА ПЕРВУЮ ЗАГРУЗКУ ПОСТОВ БЕЗ ТОКЕНА
     React.useEffect(() => {
-        // Принимает 3 параметра: 1-subreddit, 2-sortmod, 3-time
-
-        FetchPosts('cryptocurrency');
-    }, []);
+        if (!auth.isLoading) {
+            // Принимает 3 параметра: 1-subreddit, 2-sortmod, 3-time
+            FetchPosts('cryptocurrency');
+        }
+    }, [auth.isLoading]);
 
     const bottomOfListRef = React.useRef<HTMLDivElement>(null);
 
@@ -31,7 +31,8 @@ const CardList: React.FC<CardListProps> = () => {
         const observer = new IntersectionObserver(
             entries => {
                 if (entries[0].isIntersecting) {
-                    console.log('load more');
+                    FetchMorePosts();
+                    console.log(`prevPosts `);
                 }
             },
             { rootMargin: '1000px' }
@@ -48,19 +49,18 @@ const CardList: React.FC<CardListProps> = () => {
         };
     }, [bottomOfListRef.current]);
 
-    if (posts.isLoading) {
+    if (isLoading) {
         return (
             <div className={styles.load}>
                 <Loader type="Circles" color="#cc6633" height={100} width={100} />
             </div>
         );
     }
-
     return (
         <>
             <ul className={styles.cardList}>
                 {posts &&
-                    posts.posts.map(post => {
+                    posts.map(post => {
                         const { data, icon_img } = post;
 
                         return (

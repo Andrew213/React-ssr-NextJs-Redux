@@ -31,7 +31,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     'Set-Cookie',
                     serialize('token_appOnly', json.access_token, { path: '/', sameSite: true, secure: true })
                 );
-
                 res.end();
             } else {
                 throw new Error();

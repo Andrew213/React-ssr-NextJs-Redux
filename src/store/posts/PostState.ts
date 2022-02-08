@@ -22,6 +22,7 @@ export type IdPostDict = {
 
 export type PostsState = {
     posts: PostFetchedT[];
+    originalListing: Listing<Submission> | [];
     byId: IdPostDict;
     isLoading: boolean;
     error: boolean;
