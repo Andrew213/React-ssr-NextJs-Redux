@@ -12,11 +12,11 @@ export function splitUrl(url: string): string[] {
     return [domain, `/${rest.join('/')}`];
 }
 
-export const PostDestruction = (post: Submission): PostType => {
+export const PostDestruction = (post: Submission, authorName: string): PostType => {
     const isHidden = post.spoiler || post.over_18;
 
     const newPost: PostType = {
-        authorName: post.author.name,
+        authorName: authorName,
         commentsCount: post.num_comments,
         created: moment.unix(post.created_utc).fromNow(),
         isHidden,

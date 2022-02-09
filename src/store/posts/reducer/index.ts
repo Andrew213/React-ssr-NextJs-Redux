@@ -4,11 +4,19 @@ import { PostsState } from '../PostState';
 const defaultState: PostsState = {
     posts: [],
     isLoading: true,
-    originalListing: [],
     byId: {},
     error: false,
     after: '',
 };
+
+// const combineWithNewPost = (oldPosts, newPosts) => {
+//     const newPostsObj = { ...oldPosts };
+//     newPosts.forEach((post, i) => {
+//         newPostsObj[i + 1] = post;
+//     });
+
+//     return newPostsObj;
+// };
 
 const posts = (state: PostsState = defaultState, action: PostActionType): PostsState => {
     switch (action.type) {
@@ -21,7 +29,6 @@ const posts = (state: PostsState = defaultState, action: PostActionType): PostsS
             return {
                 ...state,
                 posts: action.posts,
-                originalListing: action.originalListing,
                 isLoading: false,
             };
         case PostsActionsTypes.FETCH_POST_ERROR:

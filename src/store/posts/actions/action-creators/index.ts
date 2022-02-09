@@ -21,12 +21,11 @@ export const PostsActions = {
             time,
         } as const),
 
-    receivePosts: (subreddit: string, posts: PostFetchedT[], originalListing: Listing<Submission>) =>
+    receivePosts: (subreddit: string, posts: PostFetchedT[]) =>
         ({
             type: PostsActionsTypes.RECEIVE_POSTS,
             subreddit,
             posts,
-            originalListing,
             receivedAt: Date.now(),
         } as const),
 

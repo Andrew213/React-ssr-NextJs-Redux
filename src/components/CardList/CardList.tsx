@@ -28,26 +28,29 @@ const CardList: React.FC<CardListProps> = () => {
     const bottomOfListRef = React.useRef<HTMLDivElement>(null);
 
     React.useEffect(() => {
-        const observer = new IntersectionObserver(
-            entries => {
-                if (entries[0].isIntersecting) {
-                    FetchMorePosts();
-                    console.log(`prevPosts `);
-                }
-            },
-            { rootMargin: '1000px' }
-        );
+        if (!isLoading) {
+            const observer = new IntersectionObserver(
+                entries => {
+                    if (entries[0].isIntersecting) {
+                        // FetchMorePosts();
+                        console.log('scroll');
+                    }
+                    // console.log(entries[0].isIntersecting);
+                },
+                { rootMargin: '1000px' }
+            );
 
-        if (bottomOfListRef.current) {
-            observer.observe(bottomOfListRef.current);
-        }
-
-        return () => {
             if (bottomOfListRef.current) {
-                observer.unobserve(bottomOfListRef.current);
+                observer.observe(bottomOfListRef.current);
             }
-        };
-    }, [bottomOfListRef.current]);
+
+            return () => {
+                if (bottomOfListRef.current) {
+                    observer.unobserve(bottomOfListRef.current);
+                }
+            };
+        }
+    }, [bottomOfListRef.current, isLoading]);
 
     if (isLoading) {
         return (
